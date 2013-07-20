@@ -15,7 +15,16 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    cpu/cpu.cpp \
+    mem/ram.cpp \
+    mem/register16.cpp \
+    common.cpp \
+    machine.cpp
 
 HEADERS += \
-    main.h
+    cpu/cpu.h \
+    mem/ram.h \
+    config.h \
+    mem/register16.h \
+    machine.h
