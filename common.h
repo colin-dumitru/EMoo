@@ -1,16 +1,17 @@
-#ifned COMMON_H
+#ifndef COMMON_H
 #define COMMON_H
 
 #include "config.h"
 #include "a.out.h"
-#include "machine.h"
 #include <stdio.h>
 
-Machine machine;
+#define MACHINE_AWARE \
+class Machine; \
+extern Machine machine;
 
 void log(char* message) {
 #ifdef DEBUG
-    printf(message);
+    printf("[DEBUG] %s", message);
 #endif
 }
 

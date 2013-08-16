@@ -5,6 +5,6 @@ Machine::Machine()
 }
 
 void Machine::reset() {
-    cpu.ip = 0x0000;
-    cpu.cs = 0xFFFF;
+    cpu.ip.data = 0x0000;
+    cpu.cs.data = 0xFFFF;
 }

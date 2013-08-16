@@ -5,7 +5,7 @@
 
 class Cpu
 {
-private:
+public:
     Register16 ax;
     Register16 bx;
     Register16 cx;
@@ -22,7 +22,6 @@ private:
     Register16 fs;
     Register16 gs;
 
-public:
     Cpu();
 };
 

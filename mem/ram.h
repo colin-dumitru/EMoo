@@ -2,7 +2,7 @@
 #define RAM_H
 
 #include "config.h"
-#include "common.cpp"
+#include "common.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>

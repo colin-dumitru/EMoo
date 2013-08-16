@@ -19,12 +19,12 @@ SOURCES += main.cpp \
     cpu/cpu.cpp \
     mem/ram.cpp \
     mem/register16.cpp \
-    common.cpp \
-    machine.cpp
+    machine.cpp 
 
 HEADERS += \
     cpu/cpu.h \
     mem/ram.h \
     config.h \
     mem/register16.h \
-    machine.h
+    machine.h\
+    common.h

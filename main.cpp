@@ -1,4 +1,5 @@
-#include "common.cpp"
+#include "common.h"
+#include "machine.h"
 
 void runNormal() {
 

@@ -1,8 +1,8 @@
 #ifndef MACHINE_H
 #define MACHINE_H
 
-#include "cpu/cpu.h"
 #include "mem/ram.h"
+#include "cpu/cpu.h"
 
 class Machine
 {
@@ -13,6 +13,6 @@ public:
     Machine();
 
     void reset();
-};
+} machine;
 
 #endif // MACHINE_H

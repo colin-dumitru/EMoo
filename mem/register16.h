@@ -5,9 +5,9 @@
 
 class Register16
 {
-private:
-    uint16_t data;
 public:
+    uint16_t data;
+
     Register16();
 };
 
