@@ -15,5 +15,10 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 
-SOURCES += tst_testoperation.cpp
+SOURCES += \
+    testEntry.cpp \
+    cpu/addtest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
+
+HEADERS += \
+    cpu/addtest.h
