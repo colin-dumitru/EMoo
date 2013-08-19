@@ -13,6 +13,8 @@ public:
     Machine();
 
     void reset();
-} machine;
+};
+
+extern Machine machine;
 
 #endif // MACHINE_H

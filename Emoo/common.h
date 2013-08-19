@@ -9,10 +9,6 @@
 class Machine; \
 extern Machine machine;
 
-void log(char* message) {
-#ifdef DEBUG
-    printf("[DEBUG] %s", message);
-#endif
-}
+void log(char* message);
 
 #endif
