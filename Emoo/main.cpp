@@ -1,5 +1,6 @@
 #include "common.h"
 #include "machine.h"
+#include <unistd.h>
 
 void runNormal() {
 
@@ -10,5 +11,8 @@ void runTest() {
 }
 
 int main() {
-
+    while(true) {
+        machine.step();
+        usleep(1);
+    }
 }

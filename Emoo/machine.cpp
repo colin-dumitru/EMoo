@@ -9,5 +9,9 @@ void Machine::reset() {
     cpu.cs.data = 0xFFFF;
 }
 
+void Machine::step() {
+    cpu.interpreter->interpret(cpu.cs.data << 4 + cpu.ip.data);
+}
+
 
 Machine machine;

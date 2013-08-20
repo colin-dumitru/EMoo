@@ -13,6 +13,7 @@ public:
     Machine();
 
     void reset();
+    void step();
 };
 
 extern Machine machine;

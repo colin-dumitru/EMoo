@@ -2,7 +2,6 @@
 #define COMMON_H
 
 #include "config.h"
-#include "a.out.h"
 #include <stdio.h>
 
 #define MACHINE_AWARE \
