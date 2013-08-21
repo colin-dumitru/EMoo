@@ -10,15 +10,15 @@ MAKEFILE      = Makefile
 
 ####### Compiler, tools and options
 
-CC            = gcc
-CXX           = g++
+CC            = clang
+CXX           = clang
 DEFINES       = -DQT_NO_DEBUG -DQT_CORE_LIB
-CFLAGS        = -m64 -pipe -O2 -Wall -W -D_REENTRANT -fPIE $(DEFINES)
-CXXFLAGS      = -m64 -pipe -O2 -Wall -W -D_REENTRANT -fPIE $(DEFINES)
+CFLAGS        = -m64 -pipe -O2 -Wall -W -D_REENTRANT -fPIE $(DEFINES) -emit-llvm
+CXXFLAGS      = -m64 -pipe -O2 -Wall -W -D_REENTRANT -fPIE $(DEFINES) -emit-llvm
 INCPATH       = -I/usr/share/qt5/mkspecs/linux-g++-64 -I. -I/usr/include/qt5 -I/usr/include/qt5/QtCore -I.
-LINK          = g++
-LFLAGS        = -m64 -Wl,-O1
-LIBS          = $(SUBLIBS) -lQt5Core -lpthread 
+LINK          = llvm-link
+LFLAGS        = 
+LIBS          = $(SUBLIBS) 
 AR            = ar cqs
 RANLIB        = 
 QMAKE         = /usr/lib/x86_64-linux-gnu/qt5/bin/qmake
