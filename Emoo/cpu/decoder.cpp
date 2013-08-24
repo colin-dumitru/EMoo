@@ -1,5 +1,5 @@
 #include "decoder.h"
 
-decoder::decoder()
+Decoder::Decoder()
 {
 }

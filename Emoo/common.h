@@ -10,4 +10,8 @@ extern Machine machine;
 
 void log(char* message);
 
+/**
+  Used for easy switching of inlinine for easier debuging.
+  */
+
 #endif

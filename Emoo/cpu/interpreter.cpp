@@ -1,5 +1,9 @@
 #include "interpreter.h"
 
-Interpreter::Interpreter()
+Interpreter::Interpreter(Decoder* decoder) : decoder(decoder)
+{
+}
+
+Interpreter::~Interpreter()
 {
 }

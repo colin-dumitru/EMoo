@@ -1,5 +1,2 @@
 #include "instruction.h"
-
-Instruction::Instruction()
-{
-}
+//todo remove

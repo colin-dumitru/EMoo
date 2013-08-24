@@ -4,13 +4,13 @@
 #include "mem/register16.h"
 #include "config.h"
 #include "common.h"
+#include "interpreter.h"
+#include "decoder.h"
+#include "instruction.h"
 
 MACHINE_AWARE
 
 class InstructionCache;
-class Interpreter;
-class Decoder;
-class Instruction;
 
 class Cpu {
 public:
@@ -35,22 +35,6 @@ public:
 
     Interpreter* interpreter;
     Decoder* decoder;
-};
-
-class InstructionCache {
-
-private:
-    Cpu* cpu;
-
-    Instruction instructionCache[RAM_SIZE];
-    void (InstructionCache::*cacheHandlers[RAM_SIZE])(uint32_t) = {&InstructionCache::executeNew};
-
-    void executeFromCache(uint32_t address);
-    void executeNew(uint32_t address);
-
-public:
-    InstructionCache(Cpu* cpu);
-
 };
 
 #endif // CPU_H
