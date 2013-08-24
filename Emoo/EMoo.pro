@@ -20,7 +20,10 @@ SOURCES += main.cpp \
     mem/ram.cpp \
     mem/register16.cpp \
     machine.cpp \
-    common.cpp
+    common.cpp \
+    cpu/interpreter.cpp \
+    cpu/decoder.cpp \
+    cpu/instruction.cpp
 
 HEADERS += \
     cpu/cpu.h \
@@ -28,4 +31,7 @@ HEADERS += \
     config.h \
     mem/register16.h \
     machine.h\
-    common.h
+    common.h \
+    cpu/interpreter.h \
+    cpu/decoder.h \
+    cpu/instruction.h

@@ -37,35 +37,6 @@ public:
     Decoder* decoder;
 };
 
-class Decoder {
-private:
-    Cpu* cpu;
-
-
-public:
-    Decoder(Cpu* cpu);
-
-    void decode(uint32_t address, Instruction* instruction);
-};
-
-class Interpreter {
-private:
-    Cpu* cpu;
-    InstructionCache* cache;
-public:
-    Interpreter(Cpu* cpu);
-    ~Interpreter();
-
-    void interpret(uint32_t address);
-};
-
-class Instruction {
-public:
-    void (Interpreter::*handler)(Instruction*);
-    uint32_t op1;
-    uint32_t op2;
-};
-
 class InstructionCache {
 
 private:
