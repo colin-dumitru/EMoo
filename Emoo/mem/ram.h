@@ -11,9 +11,11 @@ class Ram
 {
 
 private:
-    uint8_t buffer[RAM_SIZE];
+
 public:
     Ram();
+
+    uint8_t buffer[RAM_SIZE];
 
     void loadFromFile(char* filename, uint8_t address);
 };

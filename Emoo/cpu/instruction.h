@@ -5,32 +5,6 @@
 
 #define REGISTER_ADDRESSING 0x05
 
-enum PrefixMask {
-    GROUP_1          = 0b11000000,
-    GROUP_2          = 0b00111100,
-    GROUP_3          = 0b00000010,
-    GROUP_4          = 0b00000001
-};
-
-enum PrefixValue {
-    LOCK             = 0b01000000,
-    REPNE            = 0b10000000,
-    REP              = 0b11000000,
-
-    CS               = 0b00000100,
-    SS               = 0b00001000,
-    DS               = 0b00001100,
-    ES               = 0b00010000,
-    FS               = 0b00010100,
-    GS               = 0b00011000,
-    BRANCH_TAKEN     = 0b00011100,
-    BRANCH_NOT_TAKEN = 0b00100000,
-
-    OPERAND_SIZE     = 0b00000010,
-
-    ADDRESS_SIZE     = 0b00000001
-};
-
 /**
  * scale is also used what type of addressing is used by the instruction. REGISTER_ADDRESSING is used
  * for register addressing mode, otherwise using the SIB formula for memory addressing:
@@ -38,6 +12,32 @@ enum PrefixValue {
  */
 class Instruction {
 public:
+    enum PrefixMask {
+        GROUP_1          = 0b11000000,
+        GROUP_2          = 0b00111100,
+        GROUP_3          = 0b00000010,
+        GROUP_4          = 0b00000001
+    };
+
+    enum PrefixValue {
+        LOCK             = 0b01000000,
+        REPNE            = 0b10000000,
+        REP              = 0b11000000,
+
+        CS               = 0b00000100,
+        SS               = 0b00001000,
+        DS               = 0b00001100,
+        ES               = 0b00010000,
+        FS               = 0b00010100,
+        GS               = 0b00011000,
+        BRANCH_TAKEN     = 0b00011100,
+        BRANCH_NOT_TAKEN = 0b00100000,
+
+        OPERAND_SIZE     = 0b00000010,
+
+        ADDRESS_SIZE     = 0b00000001
+    };
+
     /**
       G1|  G2  |G3|G4
 
@@ -62,12 +62,16 @@ public:
     Prefix group 4
     1: 0x67: Address-size override prefix
      */
-    int8_t prefixMask;
-    int8_t opcode;
+    uint8_t prefixMask;
+    uint8_t opcode;
+    uint8_t reg;
     uint32_t displacement;
     uint8_t base;
-    uint8_t index;
-    uint8_t scale;
+    /*
+     *If true, the second operand is the register itself. If false, the second operand
+     *is the value at [base + disp]
+     */
+    bool registerAddressing;
 };
 
 

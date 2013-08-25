@@ -2,16 +2,20 @@
 #define DECODER_H
 
 #include "common.h"
+#include "mem/ram.h"
 #include "instruction.h"
 
 class Decoder {
 private:
+    Ram* ram;
+
     static bool* buildPrefixTable();
+    static uint8_t* buildPrefixEquivalenceTable();
 
     void decodePrefix(uint32_t& address, Instruction *instructon);
     void decodeInstruction(uint32_t& address, Instruction *instructon);
 
-    void decodeModRm(uint32_t address, Instruction* instruction);
+    void decodeModRm(uint32_t& address, Instruction* instruction);
 
     void decodeAddRmbRb(uint32_t& address, Instruction *instruction);
     void decodeAddRmwRw(uint32_t& address, Instruction *instruction);
@@ -21,22 +25,34 @@ private:
     void decodeAddAxIw(uint32_t& address, Instruction *instruction);
 
 public:
-    Decoder();
+    Decoder(Ram* ram);
 
     void decode(uint32_t address, Instruction* instruction);
 };
 
+inline void Decoder::decode(uint32_t address, Instruction *instruction) {
+    decodePrefix(address, instruction);
+    decodeInstruction(address, instruction);
+}
+
 inline void Decoder::decodePrefix(uint32_t& address, Instruction *instructon) {
+    static bool* prefixTable = buildPrefixTable();
+    static uint8_t* prefixEqTable = buildPrefixEquivalenceTable();
+
     instructon->prefixMask = 0;
 
+    while(prefixTable[ram->buffer[address]]) {
+        instructon->prefixMask |= prefixEqTable[prefixTable[ram->buffer[address]]];
+        address++;
+    }
 }
 
 inline void Decoder::decodeInstruction(uint32_t& address, Instruction *instruction) {
-    static const void * jumoTable[] = {
+    static const void * jumpTable[] = {
         /*0x00*/ &&opAddRmbRb, &&opAddRmwRw, &&opAddRbRmb, &&opAddRwRmw, &&opAddAlIb, &&opAddAxIw
     };
 
-    //todo goto
+    goto *jumpTable[address++];
 
 opAddRmbRb:
     decodeAddRmbRb(address, instruction);
@@ -54,13 +70,12 @@ end:
     return;
 }
 
-inline void Decoder::decodeModRm(uint32_t address, Instruction* instruction) {
+inline void Decoder::decodeModRm(uint32_t& address, Instruction* instruction) {
+    static uint8_t modrm;
 
-}
+    modrm = ram->buffer[address++];
+    instruction->reg = (modrm & 0b00111000) >> 3;
 
-inline void Decoder::decode(uint32_t address, Instruction *instruction) {
-    decodePrefix(address, instruction);
-    decodeInstruction(address, instruction);
 }
 
 inline void Decoder::decodeAddRmbRb(uint32_t& address, Instruction *instruction) {

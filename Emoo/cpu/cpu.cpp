@@ -1,8 +1,9 @@
 #include "cpu.h"
+#include "machine.h"
 
 Cpu::Cpu() {
     interpreter = new Interpreter(decoder);
-    decoder = new Decoder();
+    decoder = new Decoder(&machine.ram);
 }
 
 Cpu::~Cpu() {
