@@ -74,11 +74,35 @@ inline void Decoder::decodeModRm(uint32_t& address, Instruction* instruction) {
     static uint8_t modrm;
 
     modrm = ram->buffer[address++];
-    instruction->reg = (modrm & 0b00111000) >> 3;
+    instruction->reg  = (modrm & 0b00111000) >> 3;
+    instruction->base = (modrm & 0b00000111);
+
+    switch(modrm & 0b11000000) {
+    case 0b00000000:
+        instruction->registerAddressing = false;
+
+        /*thanks intel*/
+        if(instruction->base == 0b101) {
+            instruction->displacement = ram->read16(address++);
+        }
+        break;
+    case 0b01000000:
+        instruction->registerAddressing = false;
+        instruction->displacement = ram->read8(address++);
+        break;
+    case 0b10000000:
+        instruction->registerAddressing = false;
+        instruction->displacement = ram->read16(address++);
+        break;
+    case 0b11000000:
+        instruction->registerAddressing = true;
+        break;
+    }
 
 }
 
 inline void Decoder::decodeAddRmbRb(uint32_t& address, Instruction *instruction) {
+    instruction->opcode = 0x00;
     decodeModRm(address, instruction);
 }
 
