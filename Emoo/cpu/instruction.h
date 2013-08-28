@@ -72,6 +72,8 @@ public:
      *is the value at [base + disp]
      */
     bool registerAddressing;
+
+    uint8_t length;
 };
 
 

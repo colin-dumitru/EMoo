@@ -31,6 +31,8 @@ public:
 };
 
 inline void Decoder::decode(uint32_t address, Instruction *instruction) {
+    instruction->length = 0;
+
     decodePrefix(address, instruction);
     decodeInstruction(address, instruction);
 }
@@ -42,6 +44,7 @@ inline void Decoder::decodePrefix(uint32_t& address, Instruction *instructon) {
     instructon->prefixMask = 0;
 
     while(prefixTable[ram->buffer[address]]) {
+        instructon->length++;
         instructon->prefixMask |= prefixEqTable[prefixTable[ram->buffer[address]]];
         address++;
     }
@@ -55,17 +58,17 @@ inline void Decoder::decodeInstruction(uint32_t& address, Instruction *instructi
     goto *jumpTable[address++];
 
 opAddRmbRb:
-    decodeAddRmbRb(address, instruction);
+    return decodeAddRmbRb(address, instruction);
 opAddRmwRw:
-    decodeAddRmwRw(address, instruction);
+    return decodeAddRmwRw(address, instruction);
 opAddRbRmb:
-    decodeAddRbRmb(address, instruction);
+    return decodeAddRbRmb(address, instruction);
 opAddRwRmw:
-    decodeAddRwRmw(address, instruction);
+    return decodeAddRwRmw(address, instruction);
 opAddAlIb:
-    decodeAddAlIb(address, instruction);
+    return decodeAddAlIb(address, instruction);
 opAddAxIw:
-    decodeAddAxIw(address, instruction);
+    return decodeAddAxIw(address, instruction);
 end:
     return;
 }
@@ -84,15 +87,18 @@ inline void Decoder::decodeModRm(uint32_t& address, Instruction* instruction) {
         /*thanks intel*/
         if(instruction->base == 0b101) {
             instruction->displacement = ram->read16(address++);
+            instruction->length += 2;
         }
         break;
     case 0b01000000:
         instruction->registerAddressing = false;
         instruction->displacement = ram->read8(address++);
+        instruction->length += 1;
         break;
     case 0b10000000:
         instruction->registerAddressing = false;
         instruction->displacement = ram->read16(address++);
+        instruction->length += 1;
         break;
     case 0b11000000:
         instruction->registerAddressing = true;
@@ -103,27 +109,34 @@ inline void Decoder::decodeModRm(uint32_t& address, Instruction* instruction) {
 
 inline void Decoder::decodeAddRmbRb(uint32_t& address, Instruction *instruction) {
     instruction->opcode = 0x00;
+    instruction->length += 2;
     decodeModRm(address, instruction);
 }
 
 inline void Decoder::decodeAddRmwRw(uint32_t& address, Instruction *instruction) {
-
+    instruction->opcode = 0x01;
+    instruction->length += 2;
+    decodeModRm(address, instruction);
 }
 
 inline void Decoder::decodeAddRbRmb(uint32_t& address, Instruction *instruction) {
-
+    instruction->opcode = 0x02;
+    instruction->length += 2;
+    decodeModRm(address, instruction);
 }
 
 inline void Decoder::decodeAddRwRmw(uint32_t& address, Instruction *instruction) {
-
+    instruction->opcode = 0x03;
+    instruction->length += 2;
+    decodeModRm(address, instruction);
 }
 
 inline void Decoder::decodeAddAlIb(uint32_t& address, Instruction *instruction) {
-
+    instruction->opcode = 0x04;
 }
 
 inline void Decoder::decodeAddAxIw(uint32_t& address, Instruction *instruction) {
-
+    instruction->opcode = 0x05;
 }
 
 #endif // DECODER_H

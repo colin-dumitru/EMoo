@@ -33,6 +33,10 @@ public:
     Register16 fs;
     Register16 gs;
 
+    Register16 registerTable[];
+
+    FlagsRegister flagsRegister;
+
     Interpreter* interpreter;
     Decoder* decoder;
 };

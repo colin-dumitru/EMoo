@@ -2,7 +2,7 @@
 #include "machine.h"
 
 Cpu::Cpu() {
-    interpreter = new Interpreter(decoder);
+    interpreter = new Interpreter(this);
     decoder = new Decoder(&machine.ram);
 }
 
