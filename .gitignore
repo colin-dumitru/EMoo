@@ -1,2 +1,4 @@
 build-*
+out/*
 *.pro.user
+*.h.gch

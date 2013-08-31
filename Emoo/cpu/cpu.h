@@ -49,7 +49,7 @@ public:
     //special register which is always 0
     Register16 zero;
 
-    Register16* registerTable[8];
+    Register16* registerTable[9];
 
     FlagsRegister flagsRegister;
 

@@ -14,7 +14,11 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-QMAKE_CXXFLAGS += -std=c++0x
+QMAKE_CXX = emcc
+QMAKE_CC = emcc
+QMAKE_LINK = emcc
+QMAKE_CXXFLAGS += -O2 -std=c++0x -emit-llvm -c
+QMAKE_LFLAGS += ASM_JS=1 -s TOTAL_MEMORY=50000000 -o EMoo.html
 
 SOURCES += main.cpp \
     cpu/cpu.cpp \

@@ -36,7 +36,7 @@ private:
     uint16_t decodeBaseRegisterValue(Instruction* instruction);
     uint16_t decodeRelativeAddress(Instruction* instruction);
 
-    void interpret(uint32_t& address, Instruction* instruction);
+    void interpret(uint32_t address, Instruction* instruction);
 
     void interpretAddRmbRb(uint32_t& address, Instruction *instruction);
     void interpretAddRmwRw(uint32_t& address, Instruction *instruction);
@@ -90,7 +90,7 @@ inline uint8_t Interpreter::interpret(uint32_t address) {
     return cache.instructionCache[address].length;
 }
 
-inline void Interpreter::interpret(uint32_t& address, Instruction* instruction) {
+inline void Interpreter::interpret(uint32_t address, Instruction* instruction) {
     static const void * jumpTable[] = {
         /*0x00*/ &&opAddRmbRb, &&opAddRmwRw, &&opAddRbRmb, &&opAddRwRmw, &&opAddAlIb, &&opAddAxIw
     };
