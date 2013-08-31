@@ -95,19 +95,26 @@ inline void Interpreter::interpret(uint32_t address, Instruction* instruction) {
         /*0x00*/ &&opAddRmbRb, &&opAddRmwRw, &&opAddRbRmb, &&opAddRwRmw, &&opAddAlIb, &&opAddAxIw
     };
 
-    goto *jumpTable[address++];
+    printf("%d", instruction->opcode);
+    goto *jumpTable[instruction->opcode];
 
 opAddRmbRb:
+    printf("a\n");
     return interpretAddRmbRb(address, instruction);
 opAddRmwRw:
+    printf("b\n");
     return interpretAddRmwRw(address, instruction);
 opAddRbRmb:
+    printf("c\n");
     return interpretAddRbRmb(address, instruction);
 opAddRwRmw:
+    printf("d\n");
     return interpretAddRwRmw(address, instruction);
 opAddAlIb:
+    printf("e\n");
     return interpretAddAlIb(address, instruction);
 opAddAxIw:
+    printf("f\n");
     return interpretAddAxIw(address, instruction);
 end:
     return;

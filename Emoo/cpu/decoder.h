@@ -54,7 +54,7 @@ inline void Decoder::decodeInstruction(uint32_t& address, Instruction *instructi
         /*0x00*/ &&opAddRmbRb, &&opAddRmwRw, &&opAddRbRmb, &&opAddRwRmw, &&opAddAlIb, &&opAddAxIw
     };
 
-    goto *jumpTable[address++];
+    goto *jumpTable[instruction->opcode];
 
 opAddRmbRb:
     return decodeAddRmbRb(address, instruction);
