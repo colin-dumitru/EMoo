@@ -8,10 +8,16 @@
 class Machine; \
 extern Machine machine;
 
-void log(char* message);
+#ifdef DEBUG
+#define LOG(message) printf("[LOG] %s", message)
+#else
+#define LOG(message)
+#endif
 
-/**
-  Used for easy switching of inlinine for easier debuging.
-  */
+#ifdef DEBUG
+#define ERR(message) printf("[ERR] %s", message)
+#else
+#define ERR(message)
+#endif
 
 #endif
