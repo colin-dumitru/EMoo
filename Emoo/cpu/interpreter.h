@@ -21,7 +21,7 @@ public:
 
 class Interpreter {
 private:
-    Register16* baseRegisterTable[7];
+    Register16* baseRegisterTable[Instruction::GS + 1];
 
     InstructionCache cache;
 
@@ -71,7 +71,7 @@ inline void Interpreter::decodeMemoryAddress(Instruction *instruction) {
 }
 
 inline uint16_t Interpreter::decodeBaseRegisterValue(Instruction *instruction) {
-    return baseRegisterTable[instruction->prefix]->data;
+    return baseRegisterTable[instruction->prefix & Instruction::OPERAND_MASK]->data;
 }
 
 inline uint16_t Interpreter::decodeRelativeAddress(Instruction *instruction) {
@@ -114,6 +114,8 @@ end:
 }
 
 inline void Interpreter::interpretAddRmbRb(uint32_t& address, Instruction *instruction) {
+    decodeAddress(instruction);
+
     operand1 = instruction->reg;
     operand2 = *operand2Address;
 

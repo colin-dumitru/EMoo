@@ -12,11 +12,11 @@
  */
 class Instruction {
 public:
-    const uint16_t GROUP_1_MASK = 0b11000000;
-    const uint16_t GROUP_2_MASK = 0b00111100;
-    const uint16_t GROUP_3_MASK = 0b00000010;
-    const uint16_t GROUP_4_MASK = 0b00000001;
-    const uint16_t OPERAND_MASK = 0b00011100;
+    static const uint16_t GROUP_1_MASK = 0b11000000;
+    static const uint16_t GROUP_2_MASK = 0b00111100;
+    static const uint16_t GROUP_3_MASK = 0b00000010;
+    static const uint16_t GROUP_4_MASK = 0b00000001;
+    static const uint16_t OPERAND_MASK = 0b00011100;
 
     enum PrefixValue {
         LOCK             = 0b01000000,
