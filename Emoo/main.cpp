@@ -18,7 +18,7 @@ int main() {
 
     start = clock();
 
-    while(instructions++ < 3000000) {
+    while(instructions++ < 30000000) {
         machine.step();
     }
 
