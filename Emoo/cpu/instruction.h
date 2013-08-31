@@ -12,12 +12,11 @@
  */
 class Instruction {
 public:
-    enum PrefixMask {
-        GROUP_1          = 0b11000000,
-        GROUP_2          = 0b00111100,
-        GROUP_3          = 0b00000010,
-        GROUP_4          = 0b00000001
-    };
+    const uint16_t GROUP_1_MASK = 0b11000000;
+    const uint16_t GROUP_2_MASK = 0b00111100;
+    const uint16_t GROUP_3_MASK = 0b00000010;
+    const uint16_t GROUP_4_MASK = 0b00000001;
+    const uint16_t OPERAND_MASK = 0b00011100;
 
     enum PrefixValue {
         LOCK             = 0b01000000,
@@ -30,8 +29,8 @@ public:
         ES               = 0b00010000,
         FS               = 0b00010100,
         GS               = 0b00011000,
-        BRANCH_TAKEN     = 0b00011100,
-        BRANCH_NOT_TAKEN = 0b00100000,
+        BRANCH_TAKEN     = 0b00100000,
+        BRANCH_NOT_TAKEN = 0b01000000,
 
         OPERAND_SIZE     = 0b00000010,
 
@@ -62,15 +61,15 @@ public:
     Prefix group 4
     1: 0x67: Address-size override prefix
      */
-    uint8_t prefixMask;
+    uint8_t prefix;
     uint8_t opcode;
     uint8_t reg;
+    //memory addressing: value =[reg[base] + reg[index] + displacement]
+    //register addressing: value = reg[base]
     uint32_t displacement;
     uint8_t base;
-    /*
-     *If true, the second operand is the register itself. If false, the second operand
-     *is the value at [base + disp]
-     */
+    uint8_t index;
+
     bool registerAddressing;
 
     uint8_t length;

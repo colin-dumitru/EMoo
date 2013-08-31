@@ -94,9 +94,17 @@ inline void FlagsRegister::set(uint16_t result, uint16_t instruction) {
 class Register16
 {
 public:
-    uint16_t data;
+    uint16_t data = 0;
 
     Register16();
+
+    uint8_t low() {
+        return LOW(data);
+    }
+
+    uint8_t high() {
+        return HIGH(data);
+    }
 };
 
 #endif // REGISTER16_H

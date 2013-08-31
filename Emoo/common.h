@@ -20,4 +20,7 @@ extern Machine machine;
 #define ERR(message)
 #endif
 
+#define LOW(op) ((uint8_t*)&(#op))[0]
+#define HIGH(op) ((uint8_t*)&(#op))[1]
+
 #endif

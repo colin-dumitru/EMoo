@@ -1,4 +1,5 @@
 #include "machine.h"
+#include "cpu/interpreter.h"
 
 Machine::Machine()
 {

@@ -7,10 +7,12 @@
 
 class Decoder {
 private:
-    Ram* ram;
+    uint8_t baseRegisterTable[8];
+    uint8_t indexRegisterTable[8];
+    bool prefixTable[0xFF];
+    uint8_t prefixEqTable[0xFF];
 
-    static bool* buildPrefixTable();
-    static uint8_t* buildPrefixEquivalenceTable();
+    Ram* ram;
 
     void decodePrefix(uint32_t& address, Instruction *instructon);
     void decodeInstruction(uint32_t& address, Instruction *instructon);
@@ -38,14 +40,11 @@ inline void Decoder::decode(uint32_t address, Instruction *instruction) {
 }
 
 inline void Decoder::decodePrefix(uint32_t& address, Instruction *instructon) {
-    static bool* prefixTable = buildPrefixTable();
-    static uint8_t* prefixEqTable = buildPrefixEquivalenceTable();
-
-    instructon->prefixMask = 0;
+    instructon->prefix = 0;
 
     while(prefixTable[ram->buffer[address]]) {
         instructon->length++;
-        instructon->prefixMask |= prefixEqTable[prefixTable[ram->buffer[address]]];
+        instructon->prefix |= prefixEqTable[prefixTable[ram->buffer[address]]];
         address++;
     }
 }
@@ -75,33 +74,45 @@ end:
 
 inline void Decoder::decodeModRm(uint32_t& address, Instruction* instruction) {
     static uint8_t modrm;
+    static uint8_t mod;
 
     modrm = ram->buffer[address++];
+    mod = (modrm & 0b00000111);
     instruction->reg  = (modrm & 0b00111000) >> 3;
-    instruction->base = (modrm & 0b00000111);
 
     switch(modrm & 0b11000000) {
     case 0b00000000:
         instruction->registerAddressing = false;
 
         /*thanks intel*/
-        if(instruction->base == 0b101) {
-            instruction->displacement = ram->read16(address++);
+        if(mod == 0b110) {
+            instruction->displacement = ram->read16(address);
+            instruction->base = 0b1000; //ZERO
+            instruction->index = 0b1000; //ZERO
             instruction->length += 2;
+        } else {
+            instruction->displacement = 0;
+            instruction->base = baseRegisterTable[mod];
+            instruction->index = indexRegisterTable[mod];
         }
         break;
     case 0b01000000:
         instruction->registerAddressing = false;
-        instruction->displacement = ram->read8(address++);
+        instruction->base = baseRegisterTable[mod];
+        instruction->index = indexRegisterTable[mod];
+        instruction->displacement = ram->read8(address);
         instruction->length += 1;
         break;
     case 0b10000000:
         instruction->registerAddressing = false;
-        instruction->displacement = ram->read16(address++);
-        instruction->length += 1;
+        instruction->base = baseRegisterTable[mod];
+        instruction->index = indexRegisterTable[mod];
+        instruction->displacement = ram->read16(address);
+        instruction->length += 2;
         break;
     case 0b11000000:
         instruction->registerAddressing = true;
+        instruction->base = mod;
         break;
     }
 

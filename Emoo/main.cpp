@@ -11,6 +11,14 @@ void runTest() {
 }
 
 int main() {
+    uint16_t x = 0x1234;
+
+    printf("%x\n", x);
+
+    //((uint8_t*)&x)[0] = 0x00;
+
+    printf("%x\n", ((uint8_t*)&x)[0]);
+
     while(true) {
         machine.step();
         usleep(1);
