@@ -116,7 +116,7 @@ end:
 inline void Interpreter::interpretAddRmbRb(uint32_t& address, Instruction *instruction) {
     decodeAddress(instruction);
 
-    operand1 = instruction->reg;
+    operand1 = machine.cpu.registerTable[instruction->reg];
     operand2 = *operand2Address;
 
     result = operand1 + operand2;
