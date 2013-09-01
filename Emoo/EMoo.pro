@@ -4,6 +4,11 @@
 #
 #-------------------------------------------------
 
+emcc {
+    message(Building for ASM.JS)
+    include(EMoo-ASM.pri)
+}
+
 QT       += core
 
 QT       -= gui
@@ -14,11 +19,7 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-QMAKE_CXX = emcc
-QMAKE_CC = emcc
-QMAKE_LINK = emcc
-QMAKE_CXXFLAGS += -O2 -std=c++0x -emit-llvm -c
-QMAKE_LFLAGS += ASM_JS=1 -s TOTAL_MEMORY=50000000 -o EMoo.html
+QMAKE_CXXFLAGS += -std=c++0x
 
 SOURCES += main.cpp \
     cpu/cpu.cpp \
@@ -40,3 +41,6 @@ HEADERS += \
     cpu/interpreter.h \
     cpu/decoder.h \
     cpu/instruction.h
+
+OTHER_FILES += \
+    EMoo-ASM.pri
