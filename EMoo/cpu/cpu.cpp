@@ -12,7 +12,7 @@ Cpu::Cpu() {
     registerTable[BX] = &bx;
     registerTable[SP] = &sp;
     registerTable[BP] = &bp;
-    registerTable[SI] = &sp;
+    registerTable[SI] = &si;
     registerTable[DI] = &di;
     registerTable[ZR] = &zero;
 

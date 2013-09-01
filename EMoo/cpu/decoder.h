@@ -44,7 +44,7 @@ inline void Decoder::decodePrefix(uint32_t& address, Instruction *instructon) {
 
     while(prefixTable[ram->buffer[address]]) {
         instructon->length++;
-        instructon->prefix |= prefixEqTable[prefixTable[ram->buffer[address]]];
+        instructon->prefix |= prefixEqTable[ram->buffer[address]];
         address++;
     }
 }

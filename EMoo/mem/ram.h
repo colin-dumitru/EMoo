@@ -30,7 +30,7 @@ inline uint8_t Ram::read8(uint8_t address) {
 }
 
 inline uint16_t Ram::read16(uint8_t address) {
-    return *((uint16_t*)buffer + address);
+    return *((uint16_t*)(buffer + address));
 }
 
 #endif // RAM_H
