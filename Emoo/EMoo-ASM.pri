@@ -1,5 +1,0 @@
-QMAKE_CXX = emcc
-QMAKE_CC = emcc
-QMAKE_LINK = emcc
-QMAKE_CXXFLAGS += -O3 -emit-llvm -c
-QMAKE_LFLAGS += ASM_JS=1 -s TOTAL_MEMORY=50000000 -o EMoo.html
