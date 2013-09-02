@@ -3,6 +3,7 @@
 
 #include "mem/ram.h"
 #include "cpu/cpu.h"
+#include <string.h>
 
 class Machine
 {

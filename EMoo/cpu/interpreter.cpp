@@ -15,3 +15,7 @@ Interpreter::Interpreter()
 Interpreter::~Interpreter()
 {
 }
+
+void Interpreter::reset() {
+    memset(cache.cacheSet, false, RAM_SIZE);
+}

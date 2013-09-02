@@ -50,6 +50,8 @@ public:
     Interpreter();
     ~Interpreter();
 
+    void reset();
+
     uint8_t interpret(uint32_t address);
 };
 
@@ -73,6 +75,7 @@ inline void Interpreter::decodeMemoryAddress(Instruction *instruction) {
     static uint16_t baseRegisterValue;
     static uint16_t relativeAddress;
 
+    //these functions and variables are so horbly named, that I will surely forget what they are in two weeks
     baseRegisterValue = decodeBaseRegisterValue(instruction);
     relativeAddress = decodeRelativeAddress(instruction);
 
@@ -135,15 +138,39 @@ inline void Interpreter::interpretAddRmbRb(uint32_t& address, Instruction *instr
 }
 
 inline void Interpreter::interpretAddRmwRw(uint32_t& address, Instruction *instruction) {
+    decodeAddress16(instruction);
 
+    operand1 = machine.cpu.registerTable[instruction->reg]->data;
+    operand2 = *((uint16_t*)operand2Address);
+
+    result = operand1 + operand2;
+    *((uint16_t*)operand2Address) = result;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADD);
 }
 
 inline void Interpreter::interpretAddRbRmb(uint32_t& address, Instruction *instruction) {
+    decodeAddress8(instruction);
 
+    operand1 = *machine.cpu.registerAddressTable[instruction->reg];
+    operand2 = *operand2Address;
+
+    result = operand1 + operand2;
+    *machine.cpu.registerAddressTable[instruction->reg] = LOW(result);
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADD);
 }
 
 inline void Interpreter::interpretAddRwRmw(uint32_t& address, Instruction *instruction) {
+    decodeAddress16(instruction);
 
+    operand1 = machine.cpu.registerTable[instruction->reg]->data;
+    operand2 = *((uint16_t*)operand2Address);
+
+    result = operand1 + operand2;
+    machine.cpu.registerTable[instruction->reg]->data = result;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADD);
 }
 
 inline void Interpreter::interpretAddAlIb(uint32_t& address, Instruction *instruction) {

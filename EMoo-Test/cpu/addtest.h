@@ -27,18 +27,9 @@ public:
 
 private Q_SLOTS:
     void opAddRmbRb();
-
-    void opAddRmwRw() {
-
-    }
-
-    void opAddRbRmb() {
-
-    }
-
-    void opAddRwRmw() {
-
-    }
+    void opAddRmwRw();
+    void opAddRbRmb();
+    void opAddRwRmw();
 
     void opAddAlIb() {
 
