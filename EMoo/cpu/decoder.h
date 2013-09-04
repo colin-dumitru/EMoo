@@ -19,54 +19,10 @@ private:
 
     void decodeModRm(uint32_t& address, Instruction* instruction);
 
-    void decodeAddRmbRb(uint32_t& address, Instruction *instruction);
-    void decodeAddRmwRw(uint32_t& address, Instruction *instruction);
-    void decodeAddRbRmb(uint32_t& address, Instruction *instruction);
-    void decodeAddRwRmw(uint32_t& address, Instruction *instruction);
-    void decodeAddAlIb(uint32_t& address, Instruction *instruction);
-    void decodeAddAxIw(uint32_t& address, Instruction *instruction);
-
-    void decodePushEs(Instruction *instruction);
-    void decodePopEs(Instruction *instruction);
-
-    void decodeOrRmbRb(uint32_t& address, Instruction *instruction);
-    void decodeOrRmwRw(uint32_t& address, Instruction *instruction);
-    void decodeOrRbRmb(uint32_t& address, Instruction *instruction);
-    void decodeOrRwRmw(uint32_t& address, Instruction *instruction);
-    void decodeOrAlIb(uint32_t& address, Instruction *instruction);
-    void decodeOrAxIw(uint32_t& address, Instruction *instruction);
-
-    void decodePushCs(Instruction *instruction);
-    void decodePopCs(Instruction *instruction);
-
-    void decodeAdcRmbRb(uint32_t& address, Instruction *instruction);
-    void decodeAdcRmwRw(uint32_t& address, Instruction *instruction);
-    void decodeAdcRbRmb(uint32_t& address, Instruction *instruction);
-    void decodeAdcRwRmw(uint32_t& address, Instruction *instruction);
-    void decodeAdcAlIb(uint32_t& address, Instruction *instruction);
-    void decodeAdcAxIw(uint32_t& address, Instruction *instruction);
-
-    void decodePushSs(Instruction *instruction);
-    void decodePopSs(Instruction *instruction);
-
-    void decodeSbbRmbRb(uint32_t& address, Instruction *instruction);
-    void decodeSbbRmwRw(uint32_t& address, Instruction *instruction);
-    void decodeSbbRbRmb(uint32_t& address, Instruction *instruction);
-    void decodeSbbRwRmw(uint32_t& address, Instruction *instruction);
-    void decodeSbbAlIb(uint32_t& address, Instruction *instruction);
-    void decodeSbbAxIw(uint32_t& address, Instruction *instruction);
-
-    void decodePushDs(Instruction *instruction);
-    void decodePopDs(Instruction *instruction);
-
-    void decodeAndRmbRb(uint32_t& address, Instruction *instruction);
-    void decodeAndRmwRw(uint32_t& address, Instruction *instruction);
-    void decodeAndRbRmb(uint32_t& address, Instruction *instruction);
-    void decodeAndRwRmw(uint32_t& address, Instruction *instruction);
-    void decodeAndAlIb(uint32_t& address, Instruction *instruction);
-    void decodeAndAxIw(uint32_t& address, Instruction *instruction);
-
-    void decodeDaa(Instruction *instruction);
+    void decodeGeneric(Instruction *instruction);
+    void decodeGenericModRm(uint32_t& address, Instruction *instruction);
+    void decodeGenericImmediate8(uint32_t& address, Instruction *instruction);
+    void decodeGenericImmediate16(uint32_t& address, Instruction *instruction);
 
 public:
     Decoder(Ram* ram);
@@ -108,54 +64,54 @@ inline void Decoder::decodeInstruction(uint32_t& address, Instruction *instructi
     instruction->opcode = ram->buffer[address++];
     goto *jumpTable[instruction->opcode];
 
-opAddRmbRb: return decodeAddRmbRb(address, instruction);
-opAddRmwRw: return decodeAddRmwRw(address, instruction);
-opAddRbRmb: return decodeAddRbRmb(address, instruction);
-opAddRwRmw: return decodeAddRwRmw(address, instruction);
-opAddAlIb: return decodeAddAlIb(address, instruction);
-opAddAxIw: return decodeAddAxIw(address, instruction);
+opAddRmbRb: return decodeGenericModRm(address, instruction);
+opAddRmwRw: return decodeGenericModRm(address, instruction);
+opAddRbRmb: return decodeGenericModRm(address, instruction);
+opAddRwRmw: return decodeGenericModRm(address, instruction);
+opAddAlIb: return decodeGenericImmediate8(address, instruction);
+opAddAxIw: return decodeGenericImmediate16(address, instruction);
 
-opPushEs: return decodePushEs(instruction);
-opPopEs: return decodePopEs(instruction);
+opPushEs: return decodeGeneric(instruction);
+opPopEs: return decodeGeneric(instruction);
 
-opOrRmbRb: return decodeOrRmbRb(address, instruction);
-opOrRmwRw: return decodeOrRmwRw(address, instruction);
-opOrRbRmb: return decodeOrRbRmb(address, instruction);
-opOrRwRmw: return decodeOrRwRmw(address, instruction);
-opOrAlIb: return decodeOrAlIb(address, instruction);
-opOrAxIw: return decodeOrAxIw(address, instruction);
+opOrRmbRb: return decodeGenericModRm(address, instruction);
+opOrRmwRw: return decodeGenericModRm(address, instruction);
+opOrRbRmb: return decodeGenericModRm(address, instruction);
+opOrRwRmw: return decodeGenericModRm(address, instruction);
+opOrAlIb: return decodeGenericImmediate8(address, instruction);
+opOrAxIw: return decodeGenericImmediate16(address, instruction);
 
-opPushCs: return decodePushCs(instruction);
-opPopCs: return decodePopCs(instruction);
+opPushCs: return decodeGeneric(instruction);
+opPopCs: return decodeGeneric(instruction);
 
-opAdcRmbRb: return decodeAdcRmbRb(address, instruction);
-opAdcRmwRw: return decodeAdcRmwRw(address, instruction);
-opAdcRbRmb: return decodeAdcRbRmb(address, instruction);
-opAdcRwRmw: return decodeAdcRwRmw(address, instruction);
-opAdcAlIb: return decodeAdcAlIb(address, instruction);
-opAdcAxIw: return decodeAdcAxIw(address, instruction);
+opAdcRmbRb: return decodeGenericModRm(address, instruction);
+opAdcRmwRw: return decodeGenericModRm(address, instruction);
+opAdcRbRmb: return decodeGenericModRm(address, instruction);
+opAdcRwRmw: return decodeGenericModRm(address, instruction);
+opAdcAlIb: return decodeGenericImmediate8(address, instruction);
+opAdcAxIw: return decodeGenericImmediate16(address, instruction);
 
-opPushSs: return decodePushSs(instruction);
-opPopSs: return decodePopSs(instruction);
+opPushSs: return decodeGeneric(instruction);
+opPopSs: return decodeGeneric(instruction);
 
-opSbbRmbRb: return decodeSbbRmbRb(address, instruction);
-opSbbRmwRw: return decodeSbbRmwRw(address, instruction);
-opSbbRbRmb: return decodeSbbRbRmb(address, instruction);
-opSbbRwRmw: return decodeSbbRwRmw(address, instruction);
-opSbbAlIb: return decodeSbbAlIb(address, instruction);
-opSbbAxIw: return decodeSbbAxIw(address, instruction);
+opSbbRmbRb: return decodeGenericModRm(address, instruction);
+opSbbRmwRw: return decodeGenericModRm(address, instruction);
+opSbbRbRmb: return decodeGenericModRm(address, instruction);
+opSbbRwRmw: return decodeGenericModRm(address, instruction);
+opSbbAlIb: return decodeGenericImmediate8(address, instruction);
+opSbbAxIw: return decodeGenericImmediate16(address, instruction);
 
-opPushDs: return decodePushDs(instruction);
-opPopDs: return decodePopDs(instruction);
+opPushDs: return decodeGeneric(instruction);
+opPopDs: return decodeGeneric(instruction);
 
-opAndRmbRb: return decodeAndRmbRb(address, instruction);
-opAndRmwRw: return decodeAndRmwRw(address, instruction);
-opAndRbRmb: return decodeAndRbRmb(address, instruction);
-opAndRwRmw: return decodeAndRwRmw(address, instruction);
-opAndAlIb: return decodeAndAlIb(address, instruction);
-opAndAxIw: return decodeAndAxIw(address, instruction);
+opAndRmbRb: return decodeGenericModRm(address, instruction);
+opAndRmwRw: return decodeGenericModRm(address, instruction);
+opAndRbRmb: return decodeGenericModRm(address, instruction);
+opAndRwRmw: return decodeGenericModRm(address, instruction);
+opAndAlIb: return decodeGenericImmediate8(address, instruction);
+opAndAxIw: return decodeGenericImmediate16(address, instruction);
 
-opDaa: return decodeDaa(instruction);
+opDaa: return decodeGeneric(instruction);
 
 error:
     ERR("invalid decode opcode: %d", instruction->opcode);
@@ -208,190 +164,23 @@ inline void Decoder::decodeModRm(uint32_t& address, Instruction* instruction) {
 
 }
 
-inline void Decoder::decodeAddRmbRb(uint32_t& address, Instruction *instruction) {
+inline void Decoder::decodeGeneric(Instruction *instruction) {
+    instruction->length += 1;
+}
+
+inline void Decoder::decodeGenericModRm(uint32_t& address, Instruction *instruction) {
     instruction->length += 2;
     decodeModRm(address, instruction);
 }
 
-inline void Decoder::decodeAddRmwRw(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeAddRbRmb(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeAddRwRmw(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeAddAlIb(uint32_t& address, Instruction *instruction) {
+inline void Decoder::decodeGenericImmediate8(uint32_t& address, Instruction *instruction) {
     instruction->length += 2;
     instruction->displacement = ram->read8(address);
 }
 
-inline void Decoder::decodeAddAxIw(uint32_t& address, Instruction *instruction) {
+inline void Decoder::decodeGenericImmediate16(uint32_t& address, Instruction *instruction) {
     instruction->length += 3;
     instruction->displacement = ram->read16(address);
-}
-
-inline void Decoder::decodePushEs(Instruction *instruction) {
-    instruction->length += 1;
-}
-
-inline void Decoder::decodePopEs(Instruction *instruction) {
-    instruction->length += 1;
-}
-
-inline void Decoder::decodeOrRmbRb(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeOrRmwRw(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeOrRbRmb(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeOrRwRmw(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeOrAlIb(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    instruction->displacement = ram->read8(address);
-}
-
-inline void Decoder::decodeOrAxIw(uint32_t& address, Instruction *instruction) {
-    instruction->length += 3;
-    instruction->displacement = ram->read16(address);
-}
-
-inline void Decoder::decodePushCs(Instruction *instruction) {
-    instruction->length += 1;
-}
-
-inline void Decoder::decodePopCs(Instruction *instruction) {
-    instruction->length += 1;
-}
-
-inline void Decoder::decodeAdcRmbRb(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeAdcRmwRw(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeAdcRbRmb(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeAdcRwRmw(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeAdcAlIb(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    instruction->displacement = ram->read8(address);
-}
-
-inline void Decoder::decodeAdcAxIw(uint32_t& address, Instruction *instruction) {
-    instruction->length += 3;
-    instruction->displacement = ram->read16(address);
-}
-
-inline void Decoder::decodePushSs(Instruction *instruction) {
-    instruction->length += 1;
-}
-
-inline void Decoder::decodePopSs(Instruction *instruction) {
-    instruction->length += 1;
-}
-
-inline void Decoder::decodeSbbRmbRb(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeSbbRmwRw(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeSbbRbRmb(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeSbbRwRmw(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeSbbAlIb(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    instruction->displacement = ram->read8(address);
-}
-
-inline void Decoder::decodeSbbAxIw(uint32_t& address, Instruction *instruction) {
-    instruction->length += 3;
-    instruction->displacement = ram->read16(address);
-}
-
-inline void Decoder::decodePushDs(Instruction *instruction) {
-    instruction->length += 1;
-}
-
-inline void Decoder::decodePopDs(Instruction *instruction) {
-    instruction->length += 1;
-}
-
-inline void Decoder::decodeAndRmbRb(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeAndRmwRw(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeAndRbRmb(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeAndRwRmw(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    decodeModRm(address, instruction);
-}
-
-inline void Decoder::decodeAndAlIb(uint32_t& address, Instruction *instruction) {
-    instruction->length += 2;
-    instruction->displacement = ram->read8(address);
-}
-
-inline void Decoder::decodeAndAxIw(uint32_t& address, Instruction *instruction) {
-    instruction->length += 3;
-    instruction->displacement = ram->read16(address);
-}
-
-inline void Decoder::decodeDaa(Instruction *instruction) {
-    instruction->length += 1;
 }
 
 #endif // DECODER_H
