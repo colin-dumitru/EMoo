@@ -17,7 +17,7 @@ TARGET = EMoo
 CONFIG   += console
 CONFIG   -= app_bundle
 
-TEMPLATE = lib
+TEMPLATE = app
 
 QMAKE_CXXFLAGS += -std=c++0x
 

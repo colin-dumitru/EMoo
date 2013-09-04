@@ -63,10 +63,13 @@ public:
      */
     uint8_t prefix;
     uint8_t opcode;
-    uint8_t reg;
+
     //memory addressing: value =[reg[base] + reg[index] + displacement]
     //register addressing: value = reg[base]
-    uint32_t displacement;
+    uint8_t reg;
+
+    //or immediate
+    uint16_t displacement;
     uint8_t base;
     uint8_t index;
 

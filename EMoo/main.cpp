@@ -27,4 +27,7 @@ int main() {
     printf("diff: %f ms\n", 1000.0 * (end-start) / CLOCKS_PER_SEC);
     printf("start: %lu\n", start);
     printf("end: %lu\n", end);
+
+    bool temp = true;
+    printf("%x\n", 1 + temp);
 }

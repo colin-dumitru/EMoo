@@ -9,15 +9,15 @@ class Machine; \
 extern Machine machine;
 
 #ifdef DEBUG
-#define LOG(message) printf("[LOG] %s", message)
+#define LOG(...) printf("[LOG] "); fprintf (stdout, __VA_ARGS__); printf("\n")
 #else
-#define LOG(message)
+#define LOG(...)
 #endif
 
 #ifdef DEBUG
-#define ERR(message) printf("[ERR] %s", message)
+#define ERR(...) printf("[ERR] "); fprintf (stderr, __VA_ARGS__); printf("\n")
 #else
-#define ERR(message)
+#define ERR(...)
 #endif
 
 #define LOW(op) *(uint8_t*)(&(op))
