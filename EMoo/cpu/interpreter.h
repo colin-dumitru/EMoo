@@ -598,7 +598,24 @@ inline void Interpreter::interpretAndAxIw(Instruction *instruction) {
 }
 
 inline void Interpreter::interpretDaa() {
+    static uint8_t tmpAf;
+    static uint8_t tmpCf;
 
+    if(((LOW(machine.cpu.ax.data) & 0x0F) > 9) || (machine.cpu.flagsRegister.getAf())) {
+        LOW(machine.cpu.ax.data) += 6;
+        tmpAf = 1;
+    } else {
+        tmpAf = 0;
+    }
+
+    if((LOW(machine.cpu.ax.data) > 0x9F) || (machine.cpu.flagsRegister.getCf())){
+        LOW(machine.cpu.ax.data) += 0x60;
+        tmpCf = 1;
+    } else {
+        tmpCf = 0;
+    }
+
+    machine.cpu.flagsRegister.set(tmpCf, tmpAf, LOW(machine.cpu.ax.data), FlagsRegister::DAA8);
 }
 
 

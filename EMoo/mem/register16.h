@@ -22,7 +22,8 @@ public:
         INC = 0b0000100000000000,
         DEC = 000000010000000000,
         NEG = 000000001000000000,
-        LOG = 0b0000000100000000
+        LOG = 0b0000000100000000,
+        DAA = 0b0000000010000000
     };
 
     enum Size {
@@ -38,6 +39,7 @@ public:
     const static uint16_t DEC8 = (uint16_t)DEC | BIT8;
     const static uint16_t NEG8 = (uint16_t)NEG | BIT8;
     const static uint16_t LOG8 = (uint16_t)LOG | BIT8;
+    const static uint16_t DAA8 = (uint16_t)DAA | BIT8;
 
     const static uint16_t ADD16 = (uint16_t)ADD | BIT16;
     const static uint16_t ADC16 = (uint16_t)ADC | BIT16;

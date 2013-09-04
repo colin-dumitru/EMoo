@@ -115,7 +115,6 @@ opDaa: return decodeGeneric(instruction);
 
 error:
     ERR("invalid decode opcode: %d", instruction->opcode);
-    return;
 }
 
 inline void Decoder::decodeModRm(uint32_t& address, Instruction* instruction) {

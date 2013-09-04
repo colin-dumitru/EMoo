@@ -59,6 +59,8 @@ bool FlagsRegister::getCf() {
 
     case NEG:
         return (result != 0);
+    case DAA:
+        return operand1 != 0;
     }
     return false;
 }
@@ -77,6 +79,8 @@ bool FlagsRegister::getAf() {
         return (result & 0xf) == 0;
     case DEC:
         return (result & 0xf) == 0xf;
+    case DAA:
+        return operand2 != 0;
     }
     return false;
 }
