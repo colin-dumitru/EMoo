@@ -91,6 +91,33 @@ private:
 
     void interpretDaa();
 
+    void interpretSubRmbRb(Instruction *instruction);
+    void interpretSubRmwRw(Instruction *instruction);
+    void interpretSubRbRmb(Instruction *instruction);
+    void interpretSubRwRmw(Instruction *instruction);
+    void interpretSubAlIb(Instruction *instruction);
+    void interpretSubAxIw(Instruction *instruction);
+
+    void interpretDas();
+
+    void interpretXorRmbRb(Instruction *instruction);
+    void interpretXorRmwRw(Instruction *instruction);
+    void interpretXorRbRmb(Instruction *instruction);
+    void interpretXorRwRmw(Instruction *instruction);
+    void interpretXorAlIb(Instruction *instruction);
+    void interpretXorAxIw(Instruction *instruction);
+
+    void interpretAaa();
+
+    void interpretCmpRmbRb(Instruction *instruction);
+    void interpretCmpRmwRw(Instruction *instruction);
+    void interpretCmpRbRmb(Instruction *instruction);
+    void interpretCmpRwRmw(Instruction *instruction);
+    void interpretCmpAlIb(Instruction *instruction);
+    void interpretCmpAxIw(Instruction *instruction);
+
+    void interpretAas();
+
 public:
     Interpreter();
     ~Interpreter();
@@ -166,7 +193,17 @@ inline void Interpreter::interpret(uint32_t address, Instruction* instruction) {
         /*0x08*/ &&opOrRmbRb, &&opOrRmwRw, &&opOrRbRmb, &&opOrRwRmw, &&opOrAlIb, &&opOrAxIw, &&opPushCs, &&opPopCs,
         /*0x10*/ &&opAdcRmbRb, &&opAdcRmwRw, &&opAdcRbRmb, &&opAdcRwRmw, &&opAdcAlIb, &&opAdcAxIw, &&opPushSs, &&opPopSs,
         /*0x18*/ &&opSbbRmbRb, &&opSbbRmwRw, &&opSbbRbRmb, &&opSbbRwRmw, &&opSbbAlIb, &&opSbbAxIw, &&opPushDs, &&opPopDs,
-        /*0x20*/ &&opAndRmbRb, &&opAndRmwRw, &&opAndRbRmb, &&opAndRwRmw, &&opAndAlIb, &&opAndAxIw, &&error, &&opDaa
+        /*0x20*/ &&opAndRmbRb, &&opAndRmwRw, &&opAndRbRmb, &&opAndRwRmw, &&opAndAlIb, &&opAndAxIw, &&error, &&opDaa,
+        /*0x28*/ &&opSubRmbRb, &&opSubRmwRw, &&opSubRbRmb, &&opSubRwRmw, &&opSubAlIb, &&opSubAxIw, &&error, &&opDas,
+        /*0x30*/ &&opXorRmbRb, &&opXorRmwRw, &&opXorRbRmb, &&opXorRwRmw, &&opXorAlIb, &&opXorAxIw, &&error, &&opAaa, /*dendi*/
+        /*0x38*/ &&opCmpRmbRb, &&opCmpRmwRw, &&opCmpRbRmb, &&opCmpRwRmw, &&opCmpAlIb, &&opCmpAxIw, &&error, &&opAas
+        /*0x40*/
+        /*0x48*/
+        /*0x50*/
+        /*0x58*/
+        /*0x60*/
+        /*0x68*/
+        /*0x70*/
     };
 
     goto *jumpTable[instruction->opcode];
@@ -220,6 +257,33 @@ opAndAxIw: return interpretAndAxIw(instruction);
 
 opDaa: return interpretDaa();
 
+opSubRmbRb: return interpretSubRmbRb(instruction);
+opSubRmwRw: return interpretSubRmwRw(instruction);
+opSubRbRmb: return interpretSubRbRmb(instruction);
+opSubRwRmw: return interpretSubRwRmw(instruction);
+opSubAlIb: return interpretSubAlIb(instruction);
+opSubAxIw: return interpretSubAxIw(instruction);
+
+opDas: return interpretDas();
+
+opXorRmbRb: return interpretXorRmbRb(instruction);
+opXorRmwRw: return interpretXorRmwRw(instruction);
+opXorRbRmb: return interpretXorRbRmb(instruction);
+opXorRwRmw: return interpretXorRwRmw(instruction);
+opXorAlIb: return interpretXorAlIb(instruction);
+opXorAxIw: return interpretXorAxIw(instruction);
+
+opAaa: return interpretAaa();
+
+opCmpRmbRb: return interpretCmpRmbRb(instruction);
+opCmpRmwRw: return interpretCmpRmwRw(instruction);
+opCmpRbRmb: return interpretCmpRbRmb(instruction);
+opCmpRwRmw: return interpretCmpRwRmw(instruction);
+opCmpAlIb: return interpretCmpAlIb(instruction);
+opCmpAxIw: return interpretCmpAxIw(instruction);
+
+opAas: return interpretAas();
+
 error:
     ERR("invalid opcode used");
     return;
@@ -234,7 +298,7 @@ inline void Interpreter::interpretAddRmbRb(Instruction *instruction) {
     result = operand1 + operand2;
     *operand2Address = LOW(result);
 
-    machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::ADD);
+    machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::ADD8);
 }
 
 inline void Interpreter::interpretAddRmwRw(Instruction *instruction) {
@@ -246,7 +310,7 @@ inline void Interpreter::interpretAddRmwRw(Instruction *instruction) {
     result = operand1 + operand2;
     *((uint16_t*)operand2Address) = result;
 
-    machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::ADD);
+    machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::ADD16);
 }
 
 inline void Interpreter::interpretAddRbRmb(Instruction *instruction) {
@@ -258,7 +322,7 @@ inline void Interpreter::interpretAddRbRmb(Instruction *instruction) {
     result = operand1 + operand2;
     *machine.cpu.registerAddressTable[instruction->reg] = LOW(result);
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADD);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADD8);
 }
 
 inline void Interpreter::interpretAddRwRmw(Instruction *instruction) {
@@ -270,7 +334,7 @@ inline void Interpreter::interpretAddRwRmw(Instruction *instruction) {
     result = operand1 + operand2;
     machine.cpu.registerTable[instruction->reg]->data = result;
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADD);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADD16);
 }
 
 inline void Interpreter::interpretAddAlIb(Instruction *instruction) {
@@ -280,7 +344,7 @@ inline void Interpreter::interpretAddAlIb(Instruction *instruction) {
     result = operand1 + operand2;
     *machine.cpu.registerAddressTable[Cpu::AL] = LOW(result);
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADD);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADD8);
 }
 
 inline void Interpreter::interpretAddAxIw(Instruction *instruction) {
@@ -290,7 +354,7 @@ inline void Interpreter::interpretAddAxIw(Instruction *instruction) {
     result = operand1 + operand2;
     machine.cpu.ax.data = result;
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADD);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADD16);
 }
 
 inline void Interpreter::interpretPushEs() {
@@ -310,7 +374,7 @@ inline void Interpreter::interpretOrRmbRb(Instruction *instruction) {
     result = operand1 | operand2;
     *operand2Address = LOW(result);
 
-    machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::LOG);
+    machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::LOG8);
 }
 
 inline void Interpreter::interpretOrRmwRw(Instruction *instruction) {
@@ -322,7 +386,7 @@ inline void Interpreter::interpretOrRmwRw(Instruction *instruction) {
     result = operand1 | operand2;
     *((uint16_t*)operand2Address) = result;
 
-    machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::LOG);
+    machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::LOG16);
 }
 
 inline void Interpreter::interpretOrRbRmb(Instruction *instruction) {
@@ -334,7 +398,7 @@ inline void Interpreter::interpretOrRbRmb(Instruction *instruction) {
     result = operand1 | operand2;
     *machine.cpu.registerAddressTable[instruction->reg] = LOW(result);
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
 }
 
 inline void Interpreter::interpretOrRwRmw(Instruction *instruction) {
@@ -346,7 +410,7 @@ inline void Interpreter::interpretOrRwRmw(Instruction *instruction) {
     result = operand1 | operand2;
     machine.cpu.registerTable[instruction->reg]->data = result;
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
 }
 
 inline void Interpreter::interpretOrAlIb(Instruction *instruction) {
@@ -356,7 +420,7 @@ inline void Interpreter::interpretOrAlIb(Instruction *instruction) {
     result = operand1 | operand2;
     *machine.cpu.registerAddressTable[Cpu::AL] = LOW(result);
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
 }
 
 inline void Interpreter::interpretOrAxIw(Instruction *instruction) {
@@ -366,7 +430,7 @@ inline void Interpreter::interpretOrAxIw(Instruction *instruction) {
     result = operand1 | operand2;
     machine.cpu.ax.data = result;
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
 }
 
 inline void Interpreter::interpretPushCs() {
@@ -386,7 +450,7 @@ inline void Interpreter::interpretAdcRmbRb(Instruction *instruction) {
     result = operand1 + operand2 + machine.cpu.flagsRegister.getCf();
     *operand2Address = LOW(result);
 
-    machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::ADC8);
 }
 
 inline void Interpreter::interpretAdcRmwRw(Instruction *instruction) {
@@ -398,7 +462,7 @@ inline void Interpreter::interpretAdcRmwRw(Instruction *instruction) {
     result = operand1 + operand2 + machine.cpu.flagsRegister.getCf();
     *((uint16_t*)operand2Address) = result;
 
-    machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::ADC16);
 }
 
 inline void Interpreter::interpretAdcRbRmb(Instruction *instruction) {
@@ -410,7 +474,7 @@ inline void Interpreter::interpretAdcRbRmb(Instruction *instruction) {
     result = operand1 + operand2 + machine.cpu.flagsRegister.getCf();
     *machine.cpu.registerAddressTable[instruction->reg] = LOW(result);
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC8);
 }
 
 inline void Interpreter::interpretAdcRwRmw(Instruction *instruction) {
@@ -422,7 +486,7 @@ inline void Interpreter::interpretAdcRwRmw(Instruction *instruction) {
     result = operand1 + operand2 + machine.cpu.flagsRegister.getCf();
     machine.cpu.registerTable[instruction->reg]->data = result;
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC16);
 }
 
 inline void Interpreter::interpretAdcAlIb(Instruction *instruction) {
@@ -432,7 +496,7 @@ inline void Interpreter::interpretAdcAlIb(Instruction *instruction) {
     result = operand1 + operand2 + machine.cpu.flagsRegister.getCf();
     *machine.cpu.registerAddressTable[Cpu::AL] = LOW(result);
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC8);
 }
 
 inline void Interpreter::interpretAdcAxIw(Instruction *instruction) {
@@ -442,7 +506,7 @@ inline void Interpreter::interpretAdcAxIw(Instruction *instruction) {
     result = operand1 + operand2 + machine.cpu.flagsRegister.getCf();
     machine.cpu.ax.data = result;
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC16);
 }
 
 inline void Interpreter::interpretPushSs() {
@@ -462,7 +526,7 @@ inline void Interpreter::interpretSbbRmbRb(Instruction *instruction) {
     result = operand1 - (operand2 + machine.cpu.flagsRegister.getCf());
     *operand2Address = LOW(result);
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SBB8);
 }
 
 inline void Interpreter::interpretSbbRmwRw(Instruction *instruction) {
@@ -474,7 +538,7 @@ inline void Interpreter::interpretSbbRmwRw(Instruction *instruction) {
     result = operand1 - (operand2 + machine.cpu.flagsRegister.getCf());
     *((uint16_t*)operand2Address) = result;
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SBB16);
 }
 
 inline void Interpreter::interpretSbbRbRmb(Instruction *instruction) {
@@ -486,7 +550,7 @@ inline void Interpreter::interpretSbbRbRmb(Instruction *instruction) {
     result = operand1 - (operand2 + machine.cpu.flagsRegister.getCf());
     *machine.cpu.registerAddressTable[instruction->reg] = LOW(result);
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SBB8);
 }
 
 inline void Interpreter::interpretSbbRwRmw(Instruction *instruction) {
@@ -498,7 +562,7 @@ inline void Interpreter::interpretSbbRwRmw(Instruction *instruction) {
     result = operand1 - (operand2 + machine.cpu.flagsRegister.getCf());
     machine.cpu.registerTable[instruction->reg]->data = result;
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SBB16);
 }
 
 inline void Interpreter::interpretSbbAlIb(Instruction *instruction) {
@@ -508,7 +572,7 @@ inline void Interpreter::interpretSbbAlIb(Instruction *instruction) {
     result = operand1 - (operand2 + machine.cpu.flagsRegister.getCf());
     *machine.cpu.registerAddressTable[Cpu::AL] = LOW(result);
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SBB8);
 }
 
 inline void Interpreter::interpretSbbAxIw(Instruction *instruction) {
@@ -518,7 +582,7 @@ inline void Interpreter::interpretSbbAxIw(Instruction *instruction) {
     result = operand1 - (operand2 + machine.cpu.flagsRegister.getCf());
     machine.cpu.ax.data = result;
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SBB16);
 }
 
 inline void Interpreter::interpretPushDs() {
@@ -538,7 +602,7 @@ inline void Interpreter::interpretAndRmbRb(Instruction *instruction) {
     result = operand1 & operand2;
     *operand2Address = LOW(result);
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
 }
 
 inline void Interpreter::interpretAndRmwRw(Instruction *instruction) {
@@ -550,7 +614,7 @@ inline void Interpreter::interpretAndRmwRw(Instruction *instruction) {
     result = operand1 & operand2;
     *((uint16_t*)operand2Address) = result;
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
 }
 
 inline void Interpreter::interpretAndRbRmb(Instruction *instruction) {
@@ -562,7 +626,7 @@ inline void Interpreter::interpretAndRbRmb(Instruction *instruction) {
     result = operand1 & operand2;
     *machine.cpu.registerAddressTable[instruction->reg] = LOW(result);
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
 }
 
 inline void Interpreter::interpretAndRwRmw(Instruction *instruction) {
@@ -574,7 +638,7 @@ inline void Interpreter::interpretAndRwRmw(Instruction *instruction) {
     result = operand1 & operand2;
     machine.cpu.registerTable[instruction->reg]->data = result;
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
 }
 
 inline void Interpreter::interpretAndAlIb(Instruction *instruction) {
@@ -584,7 +648,7 @@ inline void Interpreter::interpretAndAlIb(Instruction *instruction) {
     result = operand1 & operand2;
     *machine.cpu.registerAddressTable[Cpu::AL] = LOW(result);
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
 }
 
 inline void Interpreter::interpretAndAxIw(Instruction *instruction) {
@@ -594,21 +658,21 @@ inline void Interpreter::interpretAndAxIw(Instruction *instruction) {
     result = operand1 & operand2;
     machine.cpu.ax.data = result;
 
-    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC);
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
 }
 
 inline void Interpreter::interpretDaa() {
     static uint8_t tmpAf;
     static uint8_t tmpCf;
 
-    if(((LOW(machine.cpu.ax.data) & 0x0F) > 9) || (machine.cpu.flagsRegister.getAf())) {
+    if(((LOW(machine.cpu.ax.data) & 0x0F) > 9) || machine.cpu.flagsRegister.getAf()) {
         LOW(machine.cpu.ax.data) += 6;
         tmpAf = 1;
     } else {
         tmpAf = 0;
     }
 
-    if((LOW(machine.cpu.ax.data) > 0x9F) || (machine.cpu.flagsRegister.getCf())){
+    if((LOW(machine.cpu.ax.data) > 0x9F) || machine.cpu.flagsRegister.getCf()){
         LOW(machine.cpu.ax.data) += 0x60;
         tmpCf = 1;
     } else {
@@ -618,5 +682,263 @@ inline void Interpreter::interpretDaa() {
     machine.cpu.flagsRegister.set(tmpCf, tmpAf, LOW(machine.cpu.ax.data), FlagsRegister::DAA8);
 }
 
+inline void Interpreter::interpretSubRmbRb(Instruction *instruction) {
+    decodeAddress8(instruction);
+
+    operand1 = *operand2Address;
+    operand2 = *machine.cpu.registerAddressTable[instruction->reg];
+
+    result = operand1 - operand2;
+    *operand2Address = LOW(result);
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
+}
+
+inline void Interpreter::interpretSubRmwRw(Instruction *instruction) {
+    decodeAddress16(instruction);
+
+    operand1 = *((uint16_t*)operand2Address);
+    operand2 = machine.cpu.registerTable[instruction->reg]->data;
+
+    result = operand1 - operand2;
+    *((uint16_t*)operand2Address) = result;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB16);
+}
+
+inline void Interpreter::interpretSubRbRmb(Instruction *instruction) {
+    decodeAddress8(instruction);
+
+    operand1 = *machine.cpu.registerAddressTable[instruction->reg];
+    operand2 = *operand2Address;
+
+    result = operand1 - operand2;
+    *machine.cpu.registerAddressTable[instruction->reg] = LOW(result);
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
+}
+
+inline void Interpreter::interpretSubRwRmw(Instruction *instruction) {
+    decodeAddress16(instruction);
+
+    operand1 = machine.cpu.registerTable[instruction->reg]->data;
+    operand2 = *((uint16_t*)operand2Address);
+
+    result = operand1 - operand2;
+    machine.cpu.registerTable[instruction->reg]->data = result;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB16);
+}
+
+inline void Interpreter::interpretSubAlIb(Instruction *instruction) {
+    operand1 = *machine.cpu.registerAddressTable[Cpu::AL];
+    operand2 = instruction->displacement;
+
+    result = operand1 - operand2;
+    *machine.cpu.registerAddressTable[Cpu::AL] = LOW(result);
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
+}
+
+inline void Interpreter::interpretSubAxIw(Instruction *instruction) {
+    operand1 = machine.cpu.ax.data;
+    operand2 = instruction->displacement;
+
+    result = operand1 - operand2;
+    machine.cpu.ax.data = result;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB16);
+}
+
+inline void Interpreter::interpretDas() {
+    static uint8_t tmpAf;
+    static uint8_t tmpCf;
+
+    if(((LOW(machine.cpu.ax.data) & 0x0F) > 9) || machine.cpu.flagsRegister.getAf()) {
+        LOW(machine.cpu.ax.data) -= 6;
+        tmpAf = 1;
+    } else {
+        tmpAf = 0;
+    }
+
+    if((LOW(machine.cpu.ax.data) > 0x9F) || machine.cpu.flagsRegister.getCf()) {
+        LOW(machine.cpu.ax.data) -= 0x60;
+        tmpCf = 1;
+    } else {
+        tmpCf = 0;
+    }
+
+    machine.cpu.flagsRegister.set(tmpCf, tmpAf, LOW(machine.cpu.ax.data), FlagsRegister::DAA8);
+}
+
+inline void Interpreter::interpretXorRmbRb(Instruction *instruction) {
+    decodeAddress8(instruction);
+
+    operand1 = *operand2Address;
+    operand2 = *machine.cpu.registerAddressTable[instruction->reg];
+
+    result = operand1 ^ operand2;
+    *operand2Address = LOW(result);
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
+}
+
+inline void Interpreter::interpretXorRmwRw(Instruction *instruction) {
+    decodeAddress16(instruction);
+
+    operand1 = *((uint16_t*)operand2Address);
+    operand2 = machine.cpu.registerTable[instruction->reg]->data;
+
+    result = operand1 ^ operand2;
+    *((uint16_t*)operand2Address) = result;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
+}
+
+inline void Interpreter::interpretXorRbRmb(Instruction *instruction) {
+    decodeAddress8(instruction);
+
+    operand1 = *machine.cpu.registerAddressTable[instruction->reg];
+    operand2 = *operand2Address;
+
+    result = operand1 ^ operand2;
+    *machine.cpu.registerAddressTable[instruction->reg] = LOW(result);
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
+}
+
+inline void Interpreter::interpretXorRwRmw(Instruction *instruction) {
+    decodeAddress16(instruction);
+
+    operand1 = machine.cpu.registerTable[instruction->reg]->data;
+    operand2 = *((uint16_t*)operand2Address);
+
+    result = operand1 ^ operand2;
+    machine.cpu.registerTable[instruction->reg]->data = result;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
+}
+
+inline void Interpreter::interpretXorAlIb(Instruction *instruction) {
+    operand1 = *machine.cpu.registerAddressTable[Cpu::AL];
+    operand2 = instruction->displacement;
+
+    result = operand1 ^ operand2;
+    *machine.cpu.registerAddressTable[Cpu::AL] = LOW(result);
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
+}
+
+inline void Interpreter::interpretXorAxIw(Instruction *instruction) {
+    operand1 = machine.cpu.ax.data;
+    operand2 = instruction->displacement;
+
+    result = operand1 ^ operand2;
+    machine.cpu.ax.data = result;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
+}
+
+inline void Interpreter::interpretAaa() {
+    static uint8_t tmpAf;
+    static uint8_t tmpCf;
+
+    if (((LOW(machine.cpu.ax.data) & 0x0F) > 9) || machine.cpu.flagsRegister.getAf()) {
+        LOW(machine.cpu.ax.data) += 6;
+        HIGH(machine.cpu.ax.data) += 1;
+
+        tmpAf = 1;
+        tmpCf = 1;
+    } else {
+        tmpAf = 0;
+        tmpCf = 0;
+    }
+
+    LOW(machine.cpu.ax.data) &= 0x0F;
+
+    machine.cpu.flagsRegister.set(tmpCf, tmpAf, LOW(machine.cpu.ax.data), FlagsRegister::DAA8);
+}
+
+inline void Interpreter::interpretCmpRmbRb(Instruction *instruction) {
+    decodeAddress8(instruction);
+
+    operand1 = *operand2Address;
+    operand2 = *machine.cpu.registerAddressTable[instruction->reg];
+
+    result = operand1 - operand2;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
+}
+
+inline void Interpreter::interpretCmpRmwRw(Instruction *instruction) {
+    decodeAddress16(instruction);
+
+    operand1 = *((uint16_t*)operand2Address);
+    operand2 = machine.cpu.registerTable[instruction->reg]->data;
+
+    result = operand1 - operand2;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB16);
+}
+
+inline void Interpreter::interpretCmpRbRmb(Instruction *instruction) {
+    decodeAddress8(instruction);
+
+    operand1 = *machine.cpu.registerAddressTable[instruction->reg];
+    operand2 = *operand2Address;
+
+    result = operand1 - operand2;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
+}
+
+inline void Interpreter::interpretCmpRwRmw(Instruction *instruction) {
+    decodeAddress16(instruction);
+
+    operand1 = machine.cpu.registerTable[instruction->reg]->data;
+    operand2 = *((uint16_t*)operand2Address);
+
+    result = operand1 - operand2;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB16);
+}
+
+inline void Interpreter::interpretCmpAlIb(Instruction *instruction) {
+    operand1 = *machine.cpu.registerAddressTable[Cpu::AL];
+    operand2 = instruction->displacement;
+
+    result = operand1 - operand2;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
+}
+
+inline void Interpreter::interpretCmpAxIw(Instruction *instruction) {
+    operand1 = machine.cpu.ax.data;
+    operand2 = instruction->displacement;
+
+    result = operand1 - operand2;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB16);
+}
+
+inline void Interpreter::interpretAas() {
+    static uint8_t tmpAf;
+    static uint8_t tmpCf;
+
+    if (((LOW(machine.cpu.ax.data) & 0x0F) > 9) || machine.cpu.flagsRegister.getAf()) {
+        LOW(machine.cpu.ax.data) -= 6;
+        HIGH(machine.cpu.ax.data) -= 1;
+
+        tmpAf = 1;
+        tmpCf = 1;
+    } else {
+        tmpAf = 0;
+        tmpCf = 0;
+    }
+
+    LOW(machine.cpu.ax.data) &= 0x0F;
+
+    machine.cpu.flagsRegister.set(tmpCf, tmpAf, LOW(machine.cpu.ax.data), FlagsRegister::DAA8);
+}
 
 #endif // INTERPRETER_H

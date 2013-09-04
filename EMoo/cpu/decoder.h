@@ -53,10 +53,10 @@ inline void Decoder::decodeInstruction(uint32_t& address, Instruction *instructi
         /*0x08*/ &&opOrRmbRb, &&opOrRmwRw, &&opOrRbRmb, &&opOrRwRmw, &&opOrAlIb, &&opOrAxIw, &&opPushCs, &&opPopCs,
         /*0x10*/ &&opAdcRmbRb, &&opAdcRmwRw, &&opAdcRbRmb, &&opAdcRwRmw, &&opAdcAlIb, &&opAdcAxIw, &&opPushSs, &&opPopSs,
         /*0x18*/ &&opSbbRmbRb, &&opSbbRmwRw, &&opSbbRbRmb, &&opSbbRwRmw, &&opSbbAlIb, &&opSbbAxIw, &&opPushDs, &&opPopDs,
-        /*0x20*/ &&opAndRmbRb, &&opAndRmwRw, &&opAndRbRmb, &&opAndRwRmw, &&opAndAlIb, &&opAndAxIw, &&error, &&opDaa
-        /*0x28*/
-        /*0x30*/
-        /*0x38*/
+        /*0x20*/ &&opAndRmbRb, &&opAndRmwRw, &&opAndRbRmb, &&opAndRwRmw, &&opAndAlIb, &&opAndAxIw, &&error, &&opDaa,
+        /*0x28*/ &&opSubRmbRb, &&opSubRmwRw, &&opSubRbRmb, &&opSubRwRmw, &&opSubAlIb, &&opSubAxIw, &&error, &&opDas,
+        /*0x30*/ &&opXorRmbRb, &&opXorRmwRw, &&opXorRbRmb, &&opXorRwRmw, &&opXorAlIb, &&opXorAxIw, &&error, &&opAaa,
+        /*0x38*/ &&opCmpRmbRb, &&opCmpRmwRw, &&opCmpRbRmb, &&opCmpRwRmw, &&opCmpAlIb, &&opCmpAxIw, &&error, &&opAas
         /*0x40*/
         /*0x48*/
     };
@@ -112,6 +112,33 @@ opAndAlIb: return decodeGenericImmediate8(address, instruction);
 opAndAxIw: return decodeGenericImmediate16(address, instruction);
 
 opDaa: return decodeGeneric(instruction);
+
+opSubRmbRb: return decodeGenericModRm(address, instruction);
+opSubRmwRw: return decodeGenericModRm(address, instruction);
+opSubRbRmb: return decodeGenericModRm(address, instruction);
+opSubRwRmw: return decodeGenericModRm(address, instruction);
+opSubAlIb: return decodeGenericImmediate8(address, instruction);
+opSubAxIw: return decodeGenericImmediate16(address, instruction);
+
+opDas: return decodeGeneric(instruction);
+
+opXorRmbRb: return decodeGenericModRm(address, instruction);
+opXorRmwRw: return decodeGenericModRm(address, instruction);
+opXorRbRmb: return decodeGenericModRm(address, instruction);
+opXorRwRmw: return decodeGenericModRm(address, instruction);
+opXorAlIb: return decodeGenericImmediate8(address, instruction);
+opXorAxIw: return decodeGenericImmediate16(address, instruction);
+
+opAaa: return decodeGeneric(instruction);
+
+opCmpRmbRb: return decodeGenericModRm(address, instruction);
+opCmpRmwRw: return decodeGenericModRm(address, instruction);
+opCmpRbRmb: return decodeGenericModRm(address, instruction);
+opCmpRwRmw: return decodeGenericModRm(address, instruction);
+opCmpAlIb: return decodeGenericImmediate8(address, instruction);
+opCmpAxIw: return decodeGenericImmediate16(address, instruction);
+
+opAas: return decodeGeneric(instruction);
 
 error:
     ERR("invalid decode opcode: %d", instruction->opcode);
