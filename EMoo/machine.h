@@ -3,6 +3,7 @@
 
 #include "mem/ram.h"
 #include "cpu/cpu.h"
+#include "io/porthandler.h"
 #include <string.h>
 
 class Machine
@@ -10,6 +11,7 @@ class Machine
 public:
     Cpu cpu;
     Ram ram;
+    PortHandler portHandler;
 
     Machine();
 

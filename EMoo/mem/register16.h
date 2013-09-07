@@ -15,43 +15,46 @@ private:
     uint16_t instruction;
 public:
     enum Instruction {
-        ADD = 0b1000000000000000,
-        ADC = 0b0100000000000000,
-        SUB = 0b0010000000000000,
-        SBB = 0b0001000000000000,
-        INC = 0b0000100000000000,
-        DEC = 000000010000000000,
-        NEG = 000000001000000000,
-        LOG = 0b0000000100000000,
-        DAA = 0b0000000010000000
+        ADD  = 0b1000000000000000,
+        ADC  = 0b0100000000000000,
+        SUB  = 0b0010000000000000,
+        SBB  = 0b0001000000000000,
+        INC  = 0b0000100000000000,
+        DEC  = 000000010000000000,
+        NEG  = 000000001000000000,
+        LOG  = 0b0000000100000000,
+        DAA  = 0b0000000010000000,
+        IMUL = 0b0000000001000000
     };
 
     enum Size {
-        BIT8 = 0b0000000000000010,
+        BIT8  = 0b0000000000000010,
         BIT16 = 0b0000000000000001
     };
 
-    const static uint16_t ADD8 = (uint16_t)ADD | BIT8;
-    const static uint16_t ADC8 = (uint16_t)ADC | BIT8;
-    const static uint16_t SUB8 = (uint16_t)SUB | BIT8;
-    const static uint16_t SBB8 = (uint16_t)SBB | BIT8;
-    const static uint16_t INC8 = (uint16_t)INC | BIT8;
-    const static uint16_t DEC8 = (uint16_t)DEC | BIT8;
-    const static uint16_t NEG8 = (uint16_t)NEG | BIT8;
-    const static uint16_t LOG8 = (uint16_t)LOG | BIT8;
-    const static uint16_t DAA8 = (uint16_t)DAA | BIT8;
+    const static uint16_t ADD8  = (uint16_t)ADD | BIT8;
+    const static uint16_t ADC8  = (uint16_t)ADC | BIT8;
+    const static uint16_t SUB8  = (uint16_t)SUB | BIT8;
+    const static uint16_t SBB8  = (uint16_t)SBB | BIT8;
+    const static uint16_t NEG8  = (uint16_t)NEG | BIT8;
+    const static uint16_t LOG8  = (uint16_t)LOG | BIT8;
+    const static uint16_t DAA8  = (uint16_t)DAA | BIT8;
+    const static uint16_t IMUL8 = (uint16_t)IMUL | BIT8;
 
-    const static uint16_t ADD16 = (uint16_t)ADD | BIT16;
-    const static uint16_t ADC16 = (uint16_t)ADC | BIT16;
-    const static uint16_t SUB16 = (uint16_t)SUB | BIT16;
-    const static uint16_t SBB16 = (uint16_t)SBB | BIT16;
-    const static uint16_t INC16 = (uint16_t)INC | BIT16;
-    const static uint16_t DEC16 = (uint16_t)DEC | BIT16;
-    const static uint16_t NEG16 = (uint16_t)NEG | BIT16;
-    const static uint16_t LOG16 = (uint16_t)LOG | BIT16;
+    const static uint16_t ADD16  = (uint16_t)ADD | BIT16;
+    const static uint16_t ADC16  = (uint16_t)ADC | BIT16;
+    const static uint16_t SUB16  = (uint16_t)SUB | BIT16;
+    const static uint16_t SBB16  = (uint16_t)SBB | BIT16;
+    const static uint16_t INC16  = (uint16_t)INC | BIT16;
+    const static uint16_t DEC16  = (uint16_t)DEC | BIT16;
+    const static uint16_t NEG16  = (uint16_t)NEG | BIT16;
+    const static uint16_t LOG16  = (uint16_t)LOG | BIT16;
+    const static uint16_t IMUL16 = (uint16_t)IMUL | BIT16;
 
     static const uint16_t INSTRUCTION_MASK = 0b1111111111111100;
     static const uint16_t SIZE_MASK        = 0b0000000000000011;
+
+    bool df;
 
     void set(uint16_t operand1, uint16_t operand2, uint16_t result, uint16_t instruction);
     void set(uint16_t result, uint16_t instruction);
@@ -130,9 +133,12 @@ inline bool FlagsRegister::getCf() {
     case NEG:
         return (result != 0);
     case DAA:
-        return operand1 != 0;
+        return operand1;
     case INC:
+    case DEC:
         return operand2;
+    case IMUL:
+        return result;
 
     }
     return false;
@@ -153,7 +159,7 @@ inline bool FlagsRegister::getAf() {
     case DEC:
         return (result & 0xf) == 0xf;
     case DAA:
-        return operand2 != 0;
+        return operand2;
     }
     return false;
 }
@@ -162,23 +168,17 @@ inline bool FlagsRegister::getOf() {
     switch (instruction & INSTRUCTION_MASK) {
     case ADD:
     case ADC:
-        return ((~(operand1 ^ operand2) & (operand2 ^ result)) & 0x80000000) != 0;
+        return ((~(operand1 ^ operand2) & (operand2 ^ result)) & 0x8000) != 0;
     case SUB:
     case SBB:
-        return (((operand1 ^ operand2) & (operand1 ^ result)) & 0x80000000) != 0;
+        return (((operand1 ^ operand2) & (operand1 ^ result)) & 0x8000) != 0;
     case NEG:
     case INC:
-        if((instruction & SIZE_MASK) == BIT8) {
-            return (result & 0xFF) == 0x80;
-        } else {
-            return result == 0x8000;
-        }
+        return result == 0x8000;
     case DEC:
-        if(instruction == DEC8) {
-            return (result & 0xFF) == 0x7F;
-        } else {
-            return result == 0x7FFF;
-        }
+        return result == 0x7FFF;
+    case IMUL:
+        return result;
     }
     return false;
 }

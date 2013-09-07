@@ -29,7 +29,9 @@ SOURCES += main.cpp \
     common.cpp \
     cpu/interpreter.cpp \
     cpu/decoder.cpp \
-    cpu/instruction.cpp
+    cpu/instruction.cpp \
+    cpu/interrupthandler.cpp \
+    io/porthandler.cpp
 
 HEADERS += \
     cpu/cpu.h \
@@ -40,7 +42,9 @@ HEADERS += \
     common.h \
     cpu/interpreter.h \
     cpu/decoder.h \
-    cpu/instruction.h
+    cpu/instruction.h \
+    cpu/interrupthandler.h \
+    io/porthandler.h
 
 OTHER_FILES += \
     EMoo-ASM.pri

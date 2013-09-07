@@ -24,6 +24,9 @@ private:
     void decodeGenericImmediate8(uint32_t& address, Instruction *instruction);
     void decodeGenericImmediate16(uint32_t& address, Instruction *instruction);
 
+    void decodeImulIw(uint32_t& address, Instruction *instruction);
+    void decodeImulIb(uint32_t& address, Instruction *instruction);
+
 public:
     Decoder(Ram* ram);
 
@@ -56,9 +59,31 @@ inline void Decoder::decodeInstruction(uint32_t& address, Instruction *instructi
         /*0x20*/ &&opAndRmbRb, &&opAndRmwRw, &&opAndRbRmb, &&opAndRwRmw, &&opAndAlIb, &&opAndAxIw, &&error, &&opDaa,
         /*0x28*/ &&opSubRmbRb, &&opSubRmwRw, &&opSubRbRmb, &&opSubRwRmw, &&opSubAlIb, &&opSubAxIw, &&error, &&opDas,
         /*0x30*/ &&opXorRmbRb, &&opXorRmwRw, &&opXorRbRmb, &&opXorRwRmw, &&opXorAlIb, &&opXorAxIw, &&error, &&opAaa,
-        /*0x38*/ &&opCmpRmbRb, &&opCmpRmwRw, &&opCmpRbRmb, &&opCmpRwRmw, &&opCmpAlIb, &&opCmpAxIw, &&error, &&opAas
-        /*0x40*/
-        /*0x48*/
+        /*0x38*/ &&opCmpRmbRb, &&opCmpRmwRw, &&opCmpRbRmb, &&opCmpRwRmw, &&opCmpAlIb, &&opCmpAxIw, &&error, &&opAas,
+        /*0x40*/ &&opIncEax, &&opIncEcx, &&opIncEdx, &&opIncEbx, &&opIncEsp, &&opIncEbp, &&opIncEsi, &&opIncEdi,
+        /*0x48*/ &&opDecEax, &&opDecEcx, &&opDecEdx, &&opDecEbx, &&opDecEsp, &&opDecEbp, &&opDecEsi, &&opDecEdi,
+        /*0x50*/ &&opPushEax, &&opPushEcx, &&opPushEdx, &&opPushEbx, &&opPushEsp, &&opPushEbp, &&opPushEsi, &&opPushEdi,
+        /*0x58*/ &&opPopEax, &&opPopEcx, &&opPopEdx, &&opPopEbx, &&opPopEsp, &&opPopEbp, &&opPopEsi, &&opPopEdi,
+        /*0x60*/ &&opPusha, &&opPopa, &&opBound, &&error, &&error, &&error, &&error, &&error,
+        /*0x68*/ &&opPushIw, &&opImulIw, &&opPushIb, &&opImulIb, &&opInsb, &&opInsw, &&opOutsb, &&opOutsw,
+        /*0x70*/ &&opJo, &&opJno, &&opJb, &&opJnb, &&opJz, &&opJnz, &&opJbe, &&opJa,
+        /*0x78*/ &&opJs, &&opJns, &&opJpe, &&opJpo, &&opJl, &&opJge, &&opJle, &&opJg
+        /*0x80*/
+        /*0x88*/
+        /*0x90*/
+        /*0x98*/
+        /*0xA0*/
+        /*0xA8*/
+        /*0xB0*/
+        /*0xB8*/
+        /*0xC0*/
+        /*0xC8*/
+        /*0xD0*/
+        /*0xD8*/
+        /*0xE0*/
+        /*0xE8*/
+        /*0xF0*/
+        /*0xF8*/
     };
 
     instruction->opcode = ram->buffer[address++];
@@ -140,6 +165,73 @@ opCmpAxIw: return decodeGenericImmediate16(address, instruction);
 
 opAas: return decodeGeneric(instruction);
 
+opIncEax: return decodeGeneric(instruction);
+opIncEcx: return decodeGeneric(instruction);
+opIncEdx: return decodeGeneric(instruction);
+opIncEbx: return decodeGeneric(instruction);
+opIncEsp: return decodeGeneric(instruction);
+opIncEbp: return decodeGeneric(instruction);
+opIncEsi: return decodeGeneric(instruction);
+opIncEdi: return decodeGeneric(instruction);
+
+opDecEax: return decodeGeneric(instruction);
+opDecEcx: return decodeGeneric(instruction);
+opDecEdx: return decodeGeneric(instruction);
+opDecEbx: return decodeGeneric(instruction);
+opDecEsp: return decodeGeneric(instruction);
+opDecEbp: return decodeGeneric(instruction);
+opDecEsi: return decodeGeneric(instruction);
+opDecEdi: return decodeGeneric(instruction);
+
+opPushEax: return decodeGeneric(instruction);
+opPushEcx: return decodeGeneric(instruction);
+opPushEdx: return decodeGeneric(instruction);
+opPushEbx: return decodeGeneric(instruction);
+opPushEsp: return decodeGeneric(instruction);
+opPushEbp: return decodeGeneric(instruction);
+opPushEsi: return decodeGeneric(instruction);
+opPushEdi: return decodeGeneric(instruction);
+
+opPopEax: return decodeGeneric(instruction);
+opPopEcx: return decodeGeneric(instruction);
+opPopEdx: return decodeGeneric(instruction);
+opPopEbx: return decodeGeneric(instruction);
+opPopEsp: return decodeGeneric(instruction);
+opPopEbp: return decodeGeneric(instruction);
+opPopEsi: return decodeGeneric(instruction);
+opPopEdi: return decodeGeneric(instruction);
+
+opPusha: return decodeGeneric(instruction);
+opPopa: return decodeGeneric(instruction);
+opBound: return decodeGenericModRm(address, instruction);
+
+opPushIw: return decodeGenericImmediate16(address, instruction);
+opImulIw: return decodeImulIw(address, instruction);
+opPushIb: return decodeGenericImmediate8(address, instruction);
+opImulIb: return decodeImulIb(address, instruction);
+
+opInsb: return decodeGeneric(instruction);
+opInsw: return decodeGeneric(instruction);
+opOutsb: return decodeGeneric(instruction);
+opOutsw: return decodeGeneric(instruction);
+
+opJo: return decodeGenericImmediate8(address, instruction);
+opJno: return decodeGenericImmediate8(address, instruction);
+opJb: return decodeGenericImmediate8(address, instruction);
+opJnb: return decodeGenericImmediate8(address, instruction);
+opJz: return decodeGenericImmediate8(address, instruction);
+opJnz: return decodeGenericImmediate8(address, instruction);
+opJbe: return decodeGenericImmediate8(address, instruction);
+opJa: return decodeGenericImmediate8(address, instruction);
+opJs: return decodeGenericImmediate8(address, instruction);
+opJns: return decodeGenericImmediate8(address, instruction);
+opJpe: return decodeGenericImmediate8(address, instruction);
+opJpo: return decodeGenericImmediate8(address, instruction);
+opJl: return decodeGenericImmediate8(address, instruction);
+opJge: return decodeGenericImmediate8(address, instruction);
+opJle: return decodeGenericImmediate8(address, instruction);
+opJg: return decodeGenericImmediate8(address, instruction);
+
 error:
     ERR("invalid decode opcode: %d", instruction->opcode);
 }
@@ -207,6 +299,18 @@ inline void Decoder::decodeGenericImmediate8(uint32_t& address, Instruction *ins
 inline void Decoder::decodeGenericImmediate16(uint32_t& address, Instruction *instruction) {
     instruction->length += 3;
     instruction->displacement = ram->read16(address);
+}
+
+inline void Decoder::decodeImulIw(uint32_t &address, Instruction *instruction) {
+    instruction->length += 4;
+    decodeModRm(address, instruction);
+    instruction->displacement = ram->read16(address);
+}
+
+inline void Decoder::decodeImulIb(uint32_t &address, Instruction *instruction) {
+    instruction->length += 3;
+    decodeModRm(address, instruction);
+    instruction->displacement = ram->read8(address);
 }
 
 #endif // DECODER_H

@@ -1,10 +1,12 @@
 #include "cpu.h"
 #include "interpreter.h"
 #include "machine.h"
+#include "interrupthandler.h"
 
 Cpu::Cpu() {
     interpreter = new Interpreter();
     decoder = new Decoder(&machine.ram);
+    interruptHandler = new InterruptHandler();
 
     registerTable[AX] = &ax;
     registerTable[CX] = &cx;

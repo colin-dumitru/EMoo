@@ -11,6 +11,7 @@ MACHINE_AWARE
 
 class InstructionCache;
 class Interpreter;
+class InterruptHandler;
 
 class Cpu {
 public:
@@ -67,6 +68,7 @@ public:
 
     Interpreter* interpreter;
     Decoder* decoder;
+    InterruptHandler* interruptHandler;
 };
 
 #endif // CPU_H
