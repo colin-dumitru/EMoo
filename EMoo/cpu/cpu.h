@@ -39,6 +39,13 @@ public:
         BH = 0b111
     };
 
+    enum SEGMENT_REGISTER {
+        ES = 0b000,
+        CS = 0b001,
+        SS = 0b010,
+        DS = 0b011
+    };
+
     Cpu();
     ~Cpu();
 
@@ -63,6 +70,7 @@ public:
 
     Register16* registerTable[9];
     uint8_t* registerAddressTable[8];
+    Register16* segmentRegisterTable[4];
 
     FlagsRegister flagsRegister;
 

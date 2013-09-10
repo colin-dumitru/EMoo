@@ -73,6 +73,8 @@ public:
     uint8_t base;
     uint8_t index;
 
+    uint16_t immediate;
+
     bool registerAddressing;
 
     uint8_t length;

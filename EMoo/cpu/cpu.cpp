@@ -26,6 +26,11 @@ Cpu::Cpu() {
     registerAddressTable[CH] = (uint8_t*)&cx.data + sizeof(uint8_t);
     registerAddressTable[DH] = (uint8_t*)&dx.data + sizeof(uint8_t);
     registerAddressTable[BH] = (uint8_t*)&bx.data + sizeof(uint8_t);
+
+    segmentRegisterTable[ES] = &es;
+    segmentRegisterTable[CS] = &cs;
+    segmentRegisterTable[SS] = &ss;
+    segmentRegisterTable[DS] = &ds;
 }
 
 Cpu::~Cpu() {
