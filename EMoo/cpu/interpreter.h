@@ -211,6 +211,15 @@ private:
     void interpretXchgEsiEax();
     void interpretXchgEdiEax();
 
+    void interpretCbw();
+    void interpretCwd();
+    void interpretCall(Instruction* instruction);
+    void interpretWait();
+    void interpretPushF();
+    void interpretPopF();
+    void interpretSahF();
+    void interpretLahF();
+
 public:
     Interpreter();
     ~Interpreter();
@@ -301,7 +310,7 @@ inline void Interpreter::interpret(uint32_t address, Instruction* instruction) {
         /*0x80*/ &&opGrpRmbIb, &&opGrpRmwIw, &&opGrpRmbIb, &&opGrpRmwIb, &&opTestRmbRb, &&opTestRmwRw, &&opXchgRmbRb, &&opXchgRmwRw,
         /*0x88*/ &&opMovRmbRb, &&opMovRmwRw, &&opMovRbRmb, &&opMovRwRmw, &&opMovRmwSr, &&opLea, &&opMovSrRmw, &&opPopRmw,
         /*0x90*/ &&opNop, &&opXchgEcxEax, &&opXchgEdxEax, &&opXchgEbxEax, &&opXchgEspEax, &&opXchgEbpEax, &&opXchgEsiEax, &&opXchgEdiEax,
-        /*0x98*/
+        /*0x98*/ &&opCbw, &&opCwd, &&opCall, &&opWait, &&opPushF, &&opPopF, &&opSahF, &&opLahF
         /*0xA0*/
         /*0xA8*/
         /*0xB0*/
@@ -485,6 +494,15 @@ opXchgEspEax: return interpretXchgEspEax();
 opXchgEbpEax: return interpretXchgEbpEax();
 opXchgEsiEax: return interpretXchgEsiEax();
 opXchgEdiEax: return interpretXchgEdiEax();
+
+opCbw: return interpretCbw();
+opCwd: return interpretCwd();
+opCall: return interpretCall(instruction);
+opWait: return interpretWait();
+opPushF: return interpretPushF();
+opPopF: return interpretPopF();
+opSahF: return interpretSahF();
+opLahF: return interpretLahF();
 
 error:
     ERR("invalid opcode used");
@@ -1771,5 +1789,94 @@ inline void Interpreter::interpretXchgEdiEax(){
     machine.cpu.ax.data = machine.cpu.di.data;
     machine.cpu.di.data = operand1;
 }
+
+inline void Interpreter::interpretCbw(){
+    *machine.cpu.registerAddressTable[machine.cpu.AH] = 0 - ((*machine.cpu.registerAddressTable[machine.cpu.AL]) >> 7);
+}
+
+inline void Interpreter::interpretCwd(){
+    machine.cpu.dx.data = 0 - ((*machine.cpu.registerAddressTable[machine.cpu.AH]) >> 7);
+}
+
+inline void Interpreter::interpretCall(Instruction *instruction){
+    push(machine.cpu.cs.data);
+    push(machine.cpu.ip.data + instruction->length);
+
+    machine.cpu.ip.data = instruction->immediate;
+    machine.cpu.cs.data = instruction->displacement;
+}
+
+inline void Interpreter::interpretWait(){
+    //señor nada
+}
+
+inline void Interpreter::interpretPushF(){
+    operand1 =
+            (uint16_t)machine.cpu.flagsRegister.getCf() |
+            ((uint16_t)machine.cpu.flagsRegister.getPf() << 2) |
+            ((uint16_t)machine.cpu.flagsRegister.getAf() << 4) |
+            ((uint16_t)machine.cpu.flagsRegister.getZf() << 6) |
+            ((uint16_t)machine.cpu.flagsRegister.getSf() << 7) |
+            ((uint16_t)machine.cpu.flagsRegister.tf << 8) |
+            ((uint16_t)machine.cpu.flagsRegister.itf << 9) |
+            ((uint16_t)machine.cpu.flagsRegister.df << 10) |
+            ((uint16_t)machine.cpu.flagsRegister.getOf() << 11);
+
+    push(operand1);
+}
+
+inline void Interpreter::interpretPopF(){
+    static const uint16_t resultTable[] = {
+        0, 0, 0, 2,
+        0, 0, 0x8000, 0x8002
+    };
+
+    operand1 = pop();
+
+    machine.cpu.flagsRegister.tf = (operand1 & 256 /*1 << 8*/) != 0;
+    machine.cpu.flagsRegister.itf = (operand1 & 512 /*1 << 9*/) != 0;
+    machine.cpu.flagsRegister.df = (operand1 & 1024 /*1 << 10*/) != 0;
+
+    /*00 01 02*/
+    /*PF ZF SF*/
+    operand2 =
+            ((operand1 & 4 /*1 << 2*/ ) >> 2) |
+            ((operand1 & 64 /*1 << 6*/ ) >> 5) |
+            ((operand1 & 128 /*1 << 7*/ ) >> 5);
+
+    result = resultTable[operand2];
+
+    machine.cpu.flagsRegister.set(operand1, 0, result, FlagsRegister::POPF16);
+}
+
+inline void Interpreter::interpretSahF(){
+    static const uint16_t resultTable[] = {
+        0, 0, 0, 2,
+        0, 0, 0x8000, 0x8002
+    };
+
+    operand1 = *machine.cpu.registerAddressTable[machine.cpu.AH];
+
+    /*00 01 02*/
+    /*PF ZF SF*/
+    operand2 =
+            ((operand1 & 4 /*1 << 2*/ ) >> 2) |
+            ((operand1 & 64 /*1 << 6*/ ) >> 5) |
+            ((operand1 & 128 /*1 << 7*/ ) >> 5);
+
+    result = resultTable[operand2];
+
+    machine.cpu.flagsRegister.set(operand1, 0, result, FlagsRegister::POPF16);
+}
+
+inline void Interpreter::interpretLahF(){
+    *machine.cpu.registerAddressTable[machine.cpu.AH] =
+            (uint16_t)machine.cpu.flagsRegister.getCf() |
+            ((uint16_t)machine.cpu.flagsRegister.getPf() << 2) |
+            ((uint16_t)machine.cpu.flagsRegister.getAf() << 4) |
+            ((uint16_t)machine.cpu.flagsRegister.getZf() << 6) |
+            ((uint16_t)machine.cpu.flagsRegister.getSf() << 7);
+}
+
 
 #endif // INTERPRETER_H

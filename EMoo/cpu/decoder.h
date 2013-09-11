@@ -28,6 +28,7 @@ private:
     void decodeImulIb(uint32_t& address, Instruction *instruction);
     void decodeGrpRmbIb(uint32_t& address, Instruction *instruction);
     void decodeGrpRmwIw(uint32_t& address, Instruction *instruction);
+    void decodeCall(uint32_t& address, Instruction *instruction);
 
 public:
     Decoder(Ram* ram);
@@ -72,9 +73,9 @@ inline void Decoder::decodeInstruction(uint32_t& address, Instruction *instructi
         /*0x78*/ &&opJs, &&opJns, &&opJpe, &&opJpo, &&opJl, &&opJge, &&opJle, &&opJg,
         /*0x80*/ &&opGrpRmbIb, &&opGrpRmwIw, &&opGrpRmbIb, &&opGrpRmwIb, &&opTestRmbRb, &&opTestRmwRw, &&opXchgRmbRb, &&opXchgRmwRw,
         /*0x88*/ &&opMovRmbRb, &&opMovRmwRw, &&opMovRbRmb, &&opMovRwRmw, &&opMovRmwSr, &&opLea, &&opMovSrRmw, &&opPopRmw,
-        /*0x90*/ &&opNop, &&opXchgEcxEax, &&opXchgEdxEax, &&opXchgEbxEax, &&opXchgEspEax, &&opXchgEbpEax, &&opXchgEsiEax, &&opXchgEdiEax
-        /*0x98*/
-        /*0xA0*/
+        /*0x90*/ &&opNop, &&opXchgEcxEax, &&opXchgEdxEax, &&opXchgEbxEax, &&opXchgEspEax, &&opXchgEbpEax, &&opXchgEsiEax, &&opXchgEdiEax,
+        /*0x98*/ &&opCbw, &&opCwd, &&opCall, &&opWait, &&opPushF, &&opPopF, &&opSahF, &&opLahF,
+        /*0xA0*/ &&opMovAlRmb, &&opMovAxRmw
         /*0xA8*/
         /*0xB0*/
         /*0xB8*/
@@ -260,6 +261,15 @@ opXchgEbpEax: return decodeGenericModRm(address, instruction);
 opXchgEsiEax: return decodeGenericModRm(address, instruction);
 opXchgEdiEax: return decodeGenericModRm(address, instruction);
 
+opCbw: return decodeGeneric(instruction);
+opCwd: return decodeGeneric(instruction);
+opCall: return decodeCall(address, instruction);
+opWait: return decodeGeneric(instruction);
+opPushF: return decodeGeneric(instruction);
+opPopF: return decodeGeneric(instruction);
+opSahF: return decodeGeneric(instruction);
+opLahF: return decodeGeneric(instruction);
+
 error:
     ERR("invalid decode opcode: %d", instruction->opcode);
 }
@@ -351,6 +361,14 @@ inline void Decoder::decodeGrpRmwIw(uint32_t& address, Instruction *instruction)
     instruction->length += 4;
     decodeModRm(address, instruction);
     instruction->immediate = ram->read16(address);
+}
+
+inline void Decoder::decodeCall(uint32_t &address, Instruction *instruction) {
+    instruction->length += 5;
+
+    instruction->immediate = ram->read16(address);
+    address += 2;
+    instruction->displacement = ram->read16(address);
 }
 
 #endif // DECODER_H
