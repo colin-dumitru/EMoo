@@ -18,7 +18,7 @@ public:
 
     uint8_t buffer[RAM_SIZE];
 
-    void loadFromFile(char* filename, uint8_t address);
+    void loadFromFile(const char *filename, uint32_t address);
     void write(uint32_t address, uint8_t* source, uint32_t length);
 
     uint8_t read8(uint8_t address);

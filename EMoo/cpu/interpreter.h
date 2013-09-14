@@ -41,7 +41,10 @@ private:
     void push(uint16_t value);
     uint16_t pop();
 
-    void interpret(uint32_t address, Instruction* instruction);
+    bool isLoopFinished(Instruction *instruction);
+    void processLoop(Instruction *instruction, uint8_t operandSize);
+
+    void interpret(Instruction* instruction);
 
     void interpretAddRmbRb(Instruction *instruction);
     void interpretAddRmwRw(Instruction *instruction);
@@ -164,10 +167,10 @@ private:
     void interpretPushIb(Instruction* instruction);
     void interpretImulIb(Instruction* instruction);
 
-    void interpretInsb();
-    void interpretInsw();
-    void interpretOutsb();
-    void interpretOutsw();
+    void interpretInsb(Instruction *instruction);
+    void interpretInsw(Instruction *instruction);
+    void interpretOutsb(Instruction *instruction);
+    void interpretOutsw(Instruction *instruction);
 
     void interpretJo(Instruction* instruction);
     void interpretJno(Instruction* instruction);
@@ -219,6 +222,41 @@ private:
     void interpretPopF();
     void interpretSahF();
     void interpretLahF();
+
+    void interpretMovAlRmb(Instruction* instruction);
+    void interpretMovAxRmw(Instruction* instruction);
+    void interpretMovRmbAl(Instruction* instruction);
+    void interpretMovRmwAx(Instruction* instruction);
+    void interpretMovsb(Instruction* instruction);
+    void interpretMovsw(Instruction* instruction);
+    void interpretCmpsb(Instruction* instruction);
+    void interpretCmpsw(Instruction* instruction);
+
+    void interpretTestAlIb(Instruction* instruction);
+    void interpretTestAxIw(Instruction* instruction);
+    void interpretStosb(Instruction* instruction);
+    void interpretStosw(Instruction* instruction);
+    void interpretLodsb(Instruction* instruction);
+    void interpretLodsw(Instruction* instruction);
+    void interpretScasb(Instruction* instruction);
+    void interpretScasw(Instruction* instruction);
+
+    void interpretMovAlIb(Instruction* instruction);
+    void interpretMovClIb(Instruction* instruction);
+    void interpretMovDlIb(Instruction* instruction);
+    void interpretMovBlIb(Instruction* instruction);
+    void interpretMovAhIb(Instruction* instruction);
+    void interpretMovChIb(Instruction* instruction);
+    void interpretMovDhIb(Instruction* instruction);
+    void interpretMovBhIb(Instruction* instruction);
+    void interpretMovEaxIw(Instruction* instruction);
+    void interpretMovEcxIw(Instruction* instruction);
+    void interpretMovEdxIw(Instruction* instruction);
+    void interpretMovEbxIw(Instruction* instruction);
+    void interpretMovEspIw(Instruction* instruction);
+    void interpretMovEbpIw(Instruction* instruction);
+    void interpretMovEsiIw(Instruction* instruction);
+    void interpretMovEdiIw(Instruction* instruction);
 
 public:
     Interpreter();
@@ -284,12 +322,38 @@ inline uint8_t Interpreter::interpret(uint32_t address) {
         cache.cacheSet[address] = true;
         machine.cpu.decoder->decode(address, &cache.instructionCache[address]);
     }
-    interpret(address, &cache.instructionCache[address]);
+    interpret(&cache.instructionCache[address]);
 
     return cache.instructionCache[address].length;
 }
 
-inline void Interpreter::interpret(uint32_t address, Instruction* instruction) {
+inline bool Interpreter::isLoopFinished(Instruction* instruction) {
+    switch (instruction->prefix & Instruction::GROUP_1_MASK) {
+    case Instruction::REP:
+        return machine.cpu.cx.data == 0 || !machine.cpu.flagsRegister.getZf();
+    case Instruction::REPNE:
+        return machine.cpu.cx.data == 0 || machine.cpu.flagsRegister.getZf();
+    }
+    return true;
+}
+
+inline void Interpreter::processLoop(Instruction *instruction, uint8_t operandSize) {
+    if(machine.cpu.flagsRegister.df) {
+        machine.cpu.si.data -= operandSize;
+        machine.cpu.di.data -= operandSize;
+    } else {
+        machine.cpu.si.data += operandSize;
+        machine.cpu.di.data += operandSize;
+    }
+
+    /*-1 if the loop has not finished, 0 otherwise*/
+    if(!isLoopFinished(instruction)) {
+        machine.cpu.cx.data -= 1;
+        machine.cpu.ip.data -= instruction->length;
+    }
+}
+
+inline void Interpreter::interpret(Instruction* instruction) {
     static const void * jumpTable[] = {
         /*0x00*/ &&opAddRmbRb, &&opAddRmwRw, &&opAddRbRmb, &&opAddRwRmw, &&opAddAlIb, &&opAddAxIw, &&opPushEs, &&opPopEs,
         /*0x08*/ &&opOrRmbRb, &&opOrRmwRw, &&opOrRbRmb, &&opOrRwRmw, &&opOrAlIb, &&opOrAxIw, &&opPushCs, &&opPopCs,
@@ -310,11 +374,11 @@ inline void Interpreter::interpret(uint32_t address, Instruction* instruction) {
         /*0x80*/ &&opGrpRmbIb, &&opGrpRmwIw, &&opGrpRmbIb, &&opGrpRmwIb, &&opTestRmbRb, &&opTestRmwRw, &&opXchgRmbRb, &&opXchgRmwRw,
         /*0x88*/ &&opMovRmbRb, &&opMovRmwRw, &&opMovRbRmb, &&opMovRwRmw, &&opMovRmwSr, &&opLea, &&opMovSrRmw, &&opPopRmw,
         /*0x90*/ &&opNop, &&opXchgEcxEax, &&opXchgEdxEax, &&opXchgEbxEax, &&opXchgEspEax, &&opXchgEbpEax, &&opXchgEsiEax, &&opXchgEdiEax,
-        /*0x98*/ &&opCbw, &&opCwd, &&opCall, &&opWait, &&opPushF, &&opPopF, &&opSahF, &&opLahF
-        /*0xA0*/
-        /*0xA8*/
-        /*0xB0*/
-        /*0xB8*/
+        /*0x98*/ &&opCbw, &&opCwd, &&opCall, &&opWait, &&opPushF, &&opPopF, &&opSahF, &&opLahF,
+        /*0xA0*/ &&opMovAlRmb, &&opMovAxRmw, &&opMovRmbAl, &&opMovRmwAx, &&opMovsb, &&opMovsw, &&opCmpsb, &&opCmpsw,
+        /*0xA8*/ &&opTestAlIb, &&opTestAxIw, &&opStosb, &&opStosw, &&opLodsb, &&opLodsw, &&opScasb, &&opScasw,
+        /*0xB0*/ &&opMovAlIb, &&opMovClIb, &&opMovDlIb, &&opMovBlIb, &&opMovAhIb, &&opMovChIb, &&opMovDhIb, &&opMovBhIb,
+        /*0xB8*/ &&opMovEaxIw, &&opMovEcxIw, &&opMovEdxIw, &&opMovEbxIw, &&opMovEspIw, &&opMovEbpIw, &&opMovEsiIw, &&opMovEdiIw,
         /*0xC0*/
         /*0xC8*/
         /*0xD0*/
@@ -447,10 +511,10 @@ opImulIw: return interpretImulIw(instruction);
 opPushIw: return interpretPushIw(instruction);
 opImulIb: return interpretImulIb(instruction);
 opPushIb: return interpretPushIb(instruction);
-opInsb: return interpretInsb();
-opInsw: return interpretInsw();
-opOutsb: return interpretOutsb();
-opOutsw: return interpretOutsw();
+opInsb: return interpretInsb(instruction);
+opInsw: return interpretInsw(instruction);
+opOutsb: return interpretOutsb(instruction);
+opOutsw: return interpretOutsw(instruction);
 
 opJo: return interpretJo(instruction);
 opJno: return interpretJno(instruction);
@@ -503,6 +567,41 @@ opPushF: return interpretPushF();
 opPopF: return interpretPopF();
 opSahF: return interpretSahF();
 opLahF: return interpretLahF();
+
+opMovAlRmb: return interpretMovAlRmb(instruction);
+opMovAxRmw: return interpretMovAxRmw(instruction);
+opMovRmbAl: return interpretMovRmbAl(instruction);
+opMovRmwAx: return interpretMovRmwAx(instruction);
+opMovsb: return interpretMovsb(instruction);
+opMovsw: return interpretMovsw(instruction);
+opCmpsb: return interpretCmpsb(instruction);
+opCmpsw: return interpretCmpsw(instruction);
+
+opTestAlIb: return interpretTestAlIb(instruction);
+opTestAxIw: return interpretTestAxIw(instruction);
+opStosb: return interpretStosb(instruction);
+opStosw: return interpretStosw(instruction);
+opLodsb: return interpretLodsb(instruction);
+opLodsw: return interpretLodsw(instruction);
+opScasb: return interpretScasb(instruction);
+opScasw: return interpretScasw(instruction);
+
+opMovAlIb: return interpretMovAlIb(instruction);
+opMovClIb: return interpretMovClIb(instruction);
+opMovDlIb: return interpretMovDlIb(instruction);
+opMovBlIb: return interpretMovBlIb(instruction);
+opMovAhIb: return interpretMovAhIb(instruction);
+opMovChIb: return interpretMovChIb(instruction);
+opMovDhIb: return interpretMovDhIb(instruction);
+opMovBhIb: return interpretMovBhIb(instruction);
+opMovEaxIw: return interpretMovEaxIw(instruction);
+opMovEcxIw: return interpretMovEcxIw(instruction);
+opMovEdxIw: return interpretMovEdxIw(instruction);
+opMovEbxIw: return interpretMovEbxIw(instruction);
+opMovEspIw: return interpretMovEspIw(instruction);
+opMovEbpIw: return interpretMovEbpIw(instruction);
+opMovEsiIw: return interpretMovEsiIw(instruction);
+opMovEdiIw: return interpretMovEdiIw(instruction);
 
 error:
     ERR("invalid opcode used");
@@ -1415,20 +1514,28 @@ inline void Interpreter::interpretPushIb(Instruction *instruction) {
     push(instruction->immediate);
 }
 
-inline void Interpreter::interpretInsb() {
+inline void Interpreter::interpretInsb(Instruction* instruction) {
     LOW(machine.cpu.ax.data) = machine.portHandler.in8(machine.cpu.dx.data);
+
+    processLoop(instruction, 1);
 }
 
-inline void Interpreter::interpretInsw() {
+inline void Interpreter::interpretInsw(Instruction* instruction) {
     machine.cpu.ax.data = machine.portHandler.in16(machine.cpu.dx.data);
+
+    processLoop(instruction, 2);
 }
 
-inline void Interpreter::interpretOutsb() {
+inline void Interpreter::interpretOutsb(Instruction* instruction) {
     machine.portHandler.out8(machine.cpu.dx.data, LOW(machine.cpu.ax.data));
+
+    processLoop(instruction, 1);
 }
 
-inline void Interpreter::interpretOutsw() {
+inline void Interpreter::interpretOutsw(Instruction* instruction) {
     machine.portHandler.out16(machine.cpu.dx.data, machine.cpu.ax.data);
+
+    processLoop(instruction, 2);
 }
 
 inline void Interpreter::interpretJo(Instruction *instruction) {
@@ -1878,5 +1985,257 @@ inline void Interpreter::interpretLahF(){
             ((uint16_t)machine.cpu.flagsRegister.getSf() << 7);
 }
 
+inline void Interpreter::interpretMovAlRmb(Instruction *instruction) {
+    operand1 = (decodeBaseRegisterValue(instruction) << 4) + instruction->immediate;
+    LOW(machine.cpu.ax.data) = machine.ram.buffer[operand1];
+}
+
+inline void Interpreter::interpretMovAxRmw(Instruction *instruction) {
+    operand1 = (decodeBaseRegisterValue(instruction) << 4) + instruction->immediate;
+    machine.cpu.ax.data = *((uint16_t*)&machine.ram.buffer[operand1]);
+}
+
+
+inline void Interpreter::interpretMovRmbAl(Instruction *instruction) {
+    operand1 = (decodeBaseRegisterValue(instruction) << 4) + instruction->immediate;
+    machine.ram.buffer[operand1] = LOW(machine.cpu.ax.data);
+}
+
+inline void Interpreter::interpretMovRmwAx(Instruction *instruction) {
+    operand1 = (decodeBaseRegisterValue(instruction) << 4) + instruction->immediate;
+    *((uint16_t*)&machine.ram.buffer[operand1]) = machine.cpu.ax.data;
+}
+
+inline void Interpreter::interpretMovsb(Instruction *instruction) {
+    /*source address*/
+    operand1 = (decodeBaseRegisterValue(instruction) << 4) + machine.cpu.si.data;
+    /*destination address*/
+    operand2 = (machine.cpu.es.data << 4) + machine.cpu.di.data;
+
+    machine.ram.buffer[operand2] = machine.ram.buffer[operand1];
+
+    processLoop(instruction, 1);
+}
+
+
+inline void Interpreter::interpretMovsw(Instruction *instruction) {
+    /*source address*/
+    operand1 = (decodeBaseRegisterValue(instruction) << 4) + machine.cpu.si.data;
+    /*destination address*/
+    operand2 = (machine.cpu.es.data << 4) + machine.cpu.di.data;
+
+    machine.ram.buffer[operand2] = machine.ram.buffer[operand1];
+    machine.ram.buffer[operand2 + 1] = machine.ram.buffer[operand1 + 1];
+
+    processLoop(instruction, 2);
+}
+
+
+inline void Interpreter::interpretCmpsb(Instruction *instruction) {
+    /*source value*/
+    operand1 = machine.ram.buffer[(decodeBaseRegisterValue(instruction) << 4) + machine.cpu.si.data];
+    /*destination value*/
+    operand2 = machine.ram.buffer[(machine.cpu.es.data << 4) + machine.cpu.di.data];
+
+    result = operand1 - operand2;
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
+
+    processLoop(instruction, 1);
+}
+
+
+inline void Interpreter::interpretCmpsw(Instruction *instruction) {
+    /*source value*/
+    operand1 = *((uint16_t*)&machine.ram.buffer[(decodeBaseRegisterValue(instruction) << 4) + machine.cpu.si.data]);
+    /*destination value*/
+    operand2 = *((uint16_t*)&machine.ram.buffer[(machine.cpu.es.data << 4) + machine.cpu.di.data]);
+
+    result = operand1 - operand2;
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB16);
+
+    processLoop(instruction, 2);
+}
+
+inline void Interpreter::interpretTestAlIb(Instruction *instruction) {
+    operand1 = LOW(machine.cpu.ax.data);
+    operand2 = instruction->immediate;
+    result = operand1 & operand2;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
+}
+
+inline void Interpreter::interpretTestAxIw(Instruction *instruction) {
+    operand1 = machine.cpu.ax.data;
+    operand2 = instruction->immediate;
+    result = operand1 & operand2;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
+}
+
+inline void Interpreter::interpretStosb(Instruction* instruction) {
+    machine.ram.buffer[(machine.cpu.es.data << 4) + machine.cpu.di.data]
+            = LOW(machine.cpu.ax.data);
+
+    if(machine.cpu.flagsRegister.df) {
+        machine.cpu.di.data -= 1;
+    } else {
+        machine.cpu.di.data += 1;
+    }
+
+    if(!isLoopFinished(instruction)) {
+        machine.cpu.cx.data -= 1;
+        machine.cpu.ip.data -= instruction->length;
+    }
+}
+
+inline void Interpreter::interpretStosw(Instruction* instruction) {
+    *((uint16_t*)&machine.ram.buffer[(machine.cpu.es.data << 4) + machine.cpu.di.data])
+            = machine.cpu.ax.data;
+
+    if(machine.cpu.flagsRegister.df) {
+        machine.cpu.di.data -= 2;
+    } else {
+        machine.cpu.di.data += 2;
+    }
+
+    if(!isLoopFinished(instruction)) {
+        machine.cpu.cx.data -= 1;
+        machine.cpu.ip.data -= instruction->length;
+    }
+}
+
+inline void Interpreter::interpretLodsb(Instruction* instruction) {
+    LOW(machine.cpu.ax.data)
+            = machine.ram.buffer[(decodeBaseRegisterValue(instruction) << 4) + machine.cpu.si.data];
+
+    if(machine.cpu.flagsRegister.df) {
+        machine.cpu.si.data -= 1;
+    } else {
+        machine.cpu.si.data += 1;
+    }
+
+    if(!isLoopFinished(instruction)) {
+        machine.cpu.cx.data -= 1;
+        machine.cpu.ip.data -= instruction->length;
+    }
+}
+
+inline void Interpreter::interpretLodsw(Instruction* instruction) {
+    machine.cpu.ax.data
+            = *((uint16_t*)&machine.ram.buffer[(decodeBaseRegisterValue(instruction) << 4) + machine.cpu.si.data]);
+
+    if(machine.cpu.flagsRegister.df) {
+        machine.cpu.si.data -= 2;
+    } else {
+        machine.cpu.si.data += 2;
+    }
+
+    if(!isLoopFinished(instruction)) {
+        machine.cpu.cx.data -= 1;
+        machine.cpu.ip.data -= instruction->length;
+    }
+}
+
+inline void Interpreter::interpretScasb(Instruction* instruction) {
+    operand1 = LOW(machine.cpu.ax.data);
+    operand2 = machine.ram.buffer[(machine.cpu.es.data << 4) + machine.cpu.di.data];
+    result = operand1 - operand2;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
+
+    if(machine.cpu.flagsRegister.df) {
+        machine.cpu.di.data -= 1;
+    } else {
+        machine.cpu.di.data += 1;
+    }
+
+    if(!isLoopFinished(instruction)) {
+        machine.cpu.cx.data -= 1;
+        machine.cpu.ip.data -= instruction->length;
+    }
+}
+
+inline void Interpreter::interpretScasw(Instruction* instruction) {
+    operand1 = machine.cpu.ax.data;
+    operand2 = *((uint16_t*)&machine.ram.buffer[(machine.cpu.es.data << 4) + machine.cpu.di.data]);
+    result = operand1 - operand2;
+
+    machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB16);
+
+    if(machine.cpu.flagsRegister.df) {
+        machine.cpu.di.data -= 2;
+    } else {
+        machine.cpu.di.data += 2;
+    }
+
+    if(!isLoopFinished(instruction)) {
+        machine.cpu.cx.data -= 1;
+        machine.cpu.ip.data -= instruction->length;
+    }
+}
+
+inline void Interpreter::interpretMovAlIb(Instruction* instruction){
+    LOW(machine.cpu.ax.data) = instruction->immediate;
+}
+
+inline void Interpreter::interpretMovClIb(Instruction* instruction){
+    LOW(machine.cpu.cx.data) = instruction->immediate;
+}
+
+inline void Interpreter::interpretMovDlIb(Instruction* instruction){
+    LOW(machine.cpu.dx.data) = instruction->immediate;
+}
+
+inline void Interpreter::interpretMovBlIb(Instruction* instruction){
+    LOW(machine.cpu.bx.data) = instruction->immediate;
+}
+
+inline void Interpreter::interpretMovAhIb(Instruction* instruction){
+    HIGH(machine.cpu.ax.data) = instruction->immediate;
+}
+
+inline void Interpreter::interpretMovChIb(Instruction* instruction){
+    HIGH(machine.cpu.cx.data) = instruction->immediate;
+}
+
+inline void Interpreter::interpretMovDhIb(Instruction* instruction){
+    HIGH(machine.cpu.dx.data) = instruction->immediate;
+}
+
+inline void Interpreter::interpretMovBhIb(Instruction* instruction){
+    HIGH(machine.cpu.bx.data) = instruction->immediate;
+}
+
+inline void Interpreter::interpretMovEaxIw(Instruction* instruction){
+    machine.cpu.ax.data = instruction->immediate;
+}
+
+inline void Interpreter::interpretMovEcxIw(Instruction* instruction){
+    machine.cpu.cx.data = instruction->immediate;
+}
+
+inline void Interpreter::interpretMovEdxIw(Instruction* instruction){
+    machine.cpu.dx.data = instruction->immediate;
+}
+
+inline void Interpreter::interpretMovEbxIw(Instruction* instruction){
+    machine.cpu.bx.data = instruction->immediate;
+}
+
+inline void Interpreter::interpretMovEspIw(Instruction* instruction){
+    machine.cpu.sp.data = instruction->immediate;
+}
+
+inline void Interpreter::interpretMovEbpIw(Instruction* instruction){
+    machine.cpu.bp.data = instruction->immediate;
+}
+
+inline void Interpreter::interpretMovEsiIw(Instruction* instruction){
+    machine.cpu.si.data = instruction->immediate;
+}
+
+inline void Interpreter::interpretMovEdiIw(Instruction* instruction){
+    machine.cpu.di.data = instruction->immediate;
+}
 
 #endif // INTERPRETER_H

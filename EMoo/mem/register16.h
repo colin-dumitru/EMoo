@@ -24,7 +24,8 @@ public:
         NEG  = 000000001000000000,
         LOG  = 0b0000000100000000,
         DAA  = 0b0000000010000000,
-        IMUL = 0b0000000001000000
+        IMUL = 0b0000000001000000,
+        POPF = 0b0000000000100000
     };
 
     enum Size {
@@ -50,11 +51,14 @@ public:
     const static uint16_t NEG16  = (uint16_t)NEG | BIT16;
     const static uint16_t LOG16  = (uint16_t)LOG | BIT16;
     const static uint16_t IMUL16 = (uint16_t)IMUL | BIT16;
+    const static uint16_t POPF16 = (uint16_t)POPF | BIT16;
 
     static const uint16_t INSTRUCTION_MASK = 0b1111111111111100;
     static const uint16_t SIZE_MASK        = 0b0000000000000011;
 
     bool df;
+    bool tf;
+    bool itf;
 
     void set(uint16_t operand1, uint16_t operand2, uint16_t result, uint16_t instruction);
     void set(uint16_t result, uint16_t instruction);
@@ -139,6 +143,8 @@ inline bool FlagsRegister::getCf() {
         return operand2;
     case IMUL:
         return result;
+    case POPF:
+        return operand1 & 1;
 
     }
     return false;
@@ -160,6 +166,8 @@ inline bool FlagsRegister::getAf() {
         return (result & 0xf) == 0xf;
     case DAA:
         return operand2;
+    case POPF:
+        return (operand1 & 16 /*1 << 4*/) != 0;
     }
     return false;
 }
@@ -179,6 +187,8 @@ inline bool FlagsRegister::getOf() {
         return result == 0x7FFF;
     case IMUL:
         return result;
+    case POPF:
+        return (operand1 & 2048 /*1 << 11*/) != 0;
     }
     return false;
 }

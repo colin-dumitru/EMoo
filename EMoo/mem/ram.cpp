@@ -4,7 +4,7 @@ Ram::Ram()
 {
 }
 
-void Ram::loadFromFile(char *filename, uint8_t address) {
+void Ram::loadFromFile(const char *filename, uint32_t address) {
     FILE* file = fopen(filename, "rb");
     size_t result = 0;
 

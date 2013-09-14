@@ -75,10 +75,10 @@ inline void Decoder::decodeInstruction(uint32_t& address, Instruction *instructi
         /*0x88*/ &&opMovRmbRb, &&opMovRmwRw, &&opMovRbRmb, &&opMovRwRmw, &&opMovRmwSr, &&opLea, &&opMovSrRmw, &&opPopRmw,
         /*0x90*/ &&opNop, &&opXchgEcxEax, &&opXchgEdxEax, &&opXchgEbxEax, &&opXchgEspEax, &&opXchgEbpEax, &&opXchgEsiEax, &&opXchgEdiEax,
         /*0x98*/ &&opCbw, &&opCwd, &&opCall, &&opWait, &&opPushF, &&opPopF, &&opSahF, &&opLahF,
-        /*0xA0*/ &&opMovAlRmb, &&opMovAxRmw
-        /*0xA8*/
-        /*0xB0*/
-        /*0xB8*/
+        /*0xA0*/ &&opMovAlRmb, &&opMovAxRmw, &&opMovRmbAl, &&opMovRmwAx, &&opMovsb, &&opMovsw, &&opCmpsb, &&opCmpsw,
+        /*0xA8*/ &&opTestAlIb, &&opTestAxIw, &&opStosb, &&opStosw, &&opLodsb, &&opLodsw, &&opScasb, &&opScasw,
+        /*0xB0*/ &&opMovAlIb, &&opMovClIb, &&opMovDlIb, &&opMovBlIb, &&opMovAhIb, &&opMovChIb, &&opMovDhIb, &&opMovBhIb,
+        /*0xB8*/ &&opMovEaxIw, &&opMovEcxIw, &&opMovEdxIw, &&opMovEbxIw, &&opMovEspIw, &&opMovEbpIw, &&opMovEsiIw, &&opMovEdiIw,
         /*0xC0*/
         /*0xC8*/
         /*0xD0*/
@@ -269,6 +269,41 @@ opPushF: return decodeGeneric(instruction);
 opPopF: return decodeGeneric(instruction);
 opSahF: return decodeGeneric(instruction);
 opLahF: return decodeGeneric(instruction);
+
+opMovAlRmb: return decodeGenericImmediate16(address, instruction);
+opMovAxRmw: return decodeGenericImmediate16(address, instruction);
+opMovRmbAl: return decodeGenericImmediate16(address, instruction);
+opMovRmwAx: return decodeGenericImmediate16(address, instruction);
+opMovsb: return decodeGeneric(instruction);
+opMovsw: return decodeGeneric(instruction);
+opCmpsb: return decodeGeneric(instruction);
+opCmpsw: return decodeGeneric(instruction);
+
+opTestAlIb: return decodeGenericImmediate8(address, instruction);
+opTestAxIw: return decodeGenericImmediate16(address, instruction);
+opStosb: return decodeGeneric(instruction);
+opStosw: return decodeGeneric(instruction);
+opLodsb: return decodeGeneric(instruction);
+opLodsw: return decodeGeneric(instruction);
+opScasb: return decodeGeneric(instruction);
+opScasw: return decodeGeneric(instruction);
+
+opMovAlIb: decodeGenericImmediate8(address, instruction);
+opMovClIb: decodeGenericImmediate8(address, instruction);
+opMovDlIb: decodeGenericImmediate8(address, instruction);
+opMovBlIb: decodeGenericImmediate8(address, instruction);
+opMovAhIb: decodeGenericImmediate8(address, instruction);
+opMovChIb: decodeGenericImmediate8(address, instruction);
+opMovDhIb: decodeGenericImmediate8(address, instruction);
+opMovBhIb: decodeGenericImmediate8(address, instruction);
+opMovEaxIw: decodeGenericImmediate16(address, instruction);
+opMovEcxIw: decodeGenericImmediate16(address, instruction);
+opMovEdxIw: decodeGenericImmediate16(address, instruction);
+opMovEbxIw: decodeGenericImmediate16(address, instruction);
+opMovEspIw: decodeGenericImmediate16(address, instruction);
+opMovEbpIw: decodeGenericImmediate16(address, instruction);
+opMovEsiIw: decodeGenericImmediate16(address, instruction);
+opMovEdiIw: decodeGenericImmediate16(address, instruction);
 
 error:
     ERR("invalid decode opcode: %d", instruction->opcode);
