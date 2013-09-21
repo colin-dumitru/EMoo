@@ -7,6 +7,9 @@
 emcc {
     message(Building for ASM.JS)
     include(EMoo-ASM.pri)
+
+    OTHER_FILES += \
+        EMoo-ASM.pri
 }
 
 QT       += core
@@ -17,7 +20,7 @@ TARGET = EMoo
 CONFIG   += console
 CONFIG   -= app_bundle
 
-TEMPLATE = app
+TEMPLATE = lib
 
 QMAKE_CXXFLAGS += -std=c++0x
 
@@ -45,6 +48,3 @@ HEADERS += \
     cpu/instruction.h \
     cpu/interrupthandler.h \
     io/porthandler.h
-
-OTHER_FILES += \
-    EMoo-ASM.pri

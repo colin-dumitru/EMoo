@@ -12,7 +12,7 @@ void runTest() {
 }
 
 int main() {
-    clock_t start;
+    /*clock_t start;
     clock_t end;
     int instructions = 0;
 
@@ -28,6 +28,6 @@ int main() {
     printf("start: %lu\n", start);
     printf("end: %lu\n", end);
 
-    bool temp = true;
-    printf("%x\n", 1 + temp);
+    bool temp = 0x8000;
+    printf("%d\n", temp);*/
 }

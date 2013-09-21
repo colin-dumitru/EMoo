@@ -8,29 +8,52 @@ class FlagsRegister {
 
 private:
     static const bool PARITY_TABLE[256];
-
-    uint16_t operand1;
-    uint16_t operand2;
-    uint16_t result;
-    uint16_t instruction;
 public:
     enum Instruction {
-        ADD  = 0b1000000000000000,
-        ADC  = 0b0100000000000000,
-        SUB  = 0b0010000000000000,
-        SBB  = 0b0001000000000000,
-        INC  = 0b0000100000000000,
-        DEC  = 000000010000000000,
-        NEG  = 000000001000000000,
-        LOG  = 0b0000000100000000,
-        DAA  = 0b0000000010000000,
-        IMUL = 0b0000000001000000,
-        POPF = 0b0000000000100000
+        ADD  = 0x01,
+        ADC  = 0x02,
+        SUB  = 0x03,
+        SBB  = 0x04,
+        INC  = 0x05,
+        DEC  = 0x06,
+        NEG  = 0x07,
+        LOG  = 0x08,
+        DAA  = 0x09,
+        IMUL = 0x0A,
+        POPF = 0x0B,
+        /*
+        result is the last result needed by ZF, PF, SF; operand1 is the AUX flag; operand 2 is the result of the rotate
+        ROL
+        CF = RES & 1
+        OF = MSB(RES) ^ LSB(RES)
+
+        ROR
+        CF = MSB(RES)
+        OF = MSB(RES) ^ MSB-1(RES)
+
+        RCL
+        RES >> 1
+        CF = MSB(RES)
+        OF = MSB(RES) ^ MSB-1(RES)
+
+        RCR
+        RES >> 1
+        CF = MSB(RES)
+        OF = MSB-1(RES) ^ MSB-2(RES)
+        */
+        ROL  = 0x0C,
+        ROR  = 0x0D,
+        RCL  = 0x0E,
+        RCR  = 0x0F,
+
+        /*result is the result of the shift, operand1 is the result of the shift one step behind*/
+        SHL  = 0x10,
+        SHR  = 0x11
     };
 
     enum Size {
-        BIT8  = 0b0000000000000010,
-        BIT16 = 0b0000000000000001
+        BIT8  = 0b0000000000000000,
+        BIT16 = 0b1000000000000000
     };
 
     const static uint16_t ADD8  = (uint16_t)ADD | BIT8;
@@ -41,6 +64,8 @@ public:
     const static uint16_t LOG8  = (uint16_t)LOG | BIT8;
     const static uint16_t DAA8  = (uint16_t)DAA | BIT8;
     const static uint16_t IMUL8 = (uint16_t)IMUL | BIT8;
+    const static uint16_t SHL8  = (uint16_t)SHL  | BIT8;
+    const static uint16_t SHR8  = (uint16_t)SHR  | BIT8;
 
     const static uint16_t ADD16  = (uint16_t)ADD | BIT16;
     const static uint16_t ADC16  = (uint16_t)ADC | BIT16;
@@ -52,9 +77,16 @@ public:
     const static uint16_t LOG16  = (uint16_t)LOG | BIT16;
     const static uint16_t IMUL16 = (uint16_t)IMUL | BIT16;
     const static uint16_t POPF16 = (uint16_t)POPF | BIT16;
+    const static uint16_t SHL16  = (uint16_t)SHL  | BIT16;
+    const static uint16_t SHR16  = (uint16_t)SHR  | BIT16;
 
-    static const uint16_t INSTRUCTION_MASK = 0b1111111111111100;
-    static const uint16_t SIZE_MASK        = 0b0000000000000011;
+    static const uint16_t INSTRUCTION_MASK = 0b0111111111111111;
+    static const uint16_t SIZE_MASK        = 0b1000000000000000;
+
+    uint16_t operand1;
+    uint16_t operand2;
+    uint16_t result;
+    uint16_t instruction;
 
     bool df;
     bool tf;
@@ -86,7 +118,7 @@ inline void FlagsRegister::set(uint16_t result, uint16_t instruction) {
 class Register16
 {
 public:
-    uint16_t data = 0;
+    uint16_t data;
 
     Register16();
 
@@ -133,7 +165,6 @@ inline bool FlagsRegister::getCf() {
         } else {
             return (operand1 < result) || (operand2 == 0xFFFF);
         }
-
     case NEG:
         return (result != 0);
     case DAA:
@@ -145,7 +176,22 @@ inline bool FlagsRegister::getCf() {
         return result;
     case POPF:
         return operand1 & 1;
-
+    case ROL:
+        return operand2 & 1;
+    case ROR:
+        return operand2 & 0x8000;
+    case RCL:
+        return operand2 & 0x8000;
+    case RCR:
+        return operand2 & 0x8000;
+    case SHL:
+        if(instruction == SHL8) {
+            return operand1 & 0x80;
+        } else {
+            return operand1 & 0x8000;
+        }
+    case SHR:
+        return operand1 & 1;
     }
     return false;
 }
@@ -168,6 +214,11 @@ inline bool FlagsRegister::getAf() {
         return operand2;
     case POPF:
         return (operand1 & 16 /*1 << 4*/) != 0;
+    case ROL:
+    case ROR:
+    case RCL:
+    case RCR:
+        return operand1;
     }
     return false;
 }
@@ -188,7 +239,27 @@ inline bool FlagsRegister::getOf() {
     case IMUL:
         return result;
     case POPF:
-        return (operand1 & 2048 /*1 << 11*/) != 0;
+        return operand1 & 2048 /*1 << 11*/;
+    case ROL:
+        return (operand2 & 1) ^ (operand2 >> 15);
+    case ROR:
+        return (operand2 ^ (operand2 << 1)) & 0x7FFF;
+    case RCL:
+        return (operand2 ^ (operand2 << 1)) & 0x7FFF;
+    case RCR:
+        return (operand2 ^ (operand2 << 1)) & 0xBFFF;
+    case SHL:
+        if(instruction == SHL8) {
+            return (result ^ operand1) & 0x7F;
+        } else {
+            return (result ^ operand1) & 0x7FFF;
+        }
+    case SHR:
+        if(instruction == SHL8) {
+            return result & 0x7F;
+        } else {
+            return result & 0x7FFF;
+        }
     }
     return false;
 }

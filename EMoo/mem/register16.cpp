@@ -1,6 +1,6 @@
 #include "register16.h"
 
-Register16::Register16()
+Register16::Register16() : data(0)
 {
 }
 

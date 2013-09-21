@@ -16,12 +16,14 @@ extern Machine machine;
 #endif
 
 #ifdef DEBUG
-#define ERR(...) printf("[ERR] "); fprintf (stderr, __VA_ARGS__); printf("\n")
+#define ERR(...) fprintf(stderr, "[ERR] "); fprintf (stderr, __VA_ARGS__); fprintf(stderr, "\n")
 #else
 #define ERR(...)
 #endif
 
 #define LOW(op) *(uint8_t*)(&(op))
 #define HIGH(op) *(((uint8_t*)(&(op))) + 1)
+#define WORD(op) (uint16_t*)(op)
+#define SIGNED16(op) (int16_t)(op)
 
 #endif
