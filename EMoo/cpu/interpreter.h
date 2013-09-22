@@ -1683,7 +1683,7 @@ inline void Interpreter::interpretBound(Instruction *instruction) {
 }
 
 inline void Interpreter::interpretImulIw(Instruction *instruction) {
-    uint32_t tempResult;
+    static int32_t tempResult;
 
     decodeAddress16(instruction);
 
@@ -1694,7 +1694,7 @@ inline void Interpreter::interpretImulIw(Instruction *instruction) {
 
     machine.cpu.registerTable[instruction->reg]->data = tempResult;
 
-    machine.cpu.flagsRegister.set(tempResult >= 0xFFFF0000, FlagsRegister::IMUL16);
+    machine.cpu.flagsRegister.set(tempResult >> 16, FlagsRegister::IMUL16);
 }
 
 inline void Interpreter::interpretPushIw(Instruction *instruction) {
@@ -1702,7 +1702,7 @@ inline void Interpreter::interpretPushIw(Instruction *instruction) {
 }
 
 inline void Interpreter::interpretImulIb(Instruction *instruction) {
-    uint32_t tempResult;
+    static int32_t tempResult;
 
     decodeAddress8(instruction);
 
@@ -1713,7 +1713,7 @@ inline void Interpreter::interpretImulIb(Instruction *instruction) {
 
     machine.cpu.registerTable[instruction->reg]->data = tempResult;
 
-    machine.cpu.flagsRegister.set(tempResult >= 0xFFFF0000, FlagsRegister::IMUL8);
+    machine.cpu.flagsRegister.set(tempResult >> 16, FlagsRegister::IMUL8);
 }
 
 inline void Interpreter::interpretPushIb(Instruction *instruction) {
@@ -2750,10 +2750,59 @@ inline void Interpreter::interpretHlt() {
 }
 
 inline void Interpreter::interpretCmc() {
-
+    machine.cpu.flagsRegister.set(machine.cpu.flagsRegister.getAf() | (machine.cpu.flagsRegister.getOf() << 1), !machine.cpu.flagsRegister.getCf(),
+                                  machine.cpu.flagsRegister.result, FlagsRegister::CLC | (machine.cpu.flagsRegister.instruction & FlagsRegister::SIZE_MASK));
 }
 
 inline void Interpreter::interpretGrpIb3(Instruction* instruction) {
+    static void* jumpTable[] {
+        &&opTest, &&opTest, &&opNot, &&opNeg, &&opMul, &&opIMul, &&opDiv, &&opIDiv,
+    };
+    static int32_t tmp;
+
+    decodeAddress8(instruction);
+    operand1 = *operand2Address;
+
+    goto *jumpTable[instruction->reg];
+
+opTest:
+    machine.cpu.flagsRegister.set(operand1 & instruction->immediate, machine.cpu.flagsRegister.LOG8);
+opNot:
+    *operand2Address = ~operand1;
+opNeg:
+    *operand2Address = (~operand1) + 1;
+    machine.cpu.flagsRegister.set(0, operand1, *operand2Address, machine.cpu.flagsRegister.NEG8);
+opMul:
+    machine.cpu.ax.data = LOW(machine.cpu.ax.data) * operand1;
+    machine.cpu.flagsRegister.set(machine.cpu.ax.data, FlagsRegister::MUL8);
+opIMul:
+    machine.cpu.ax.data = SIGNED16(LOW(machine.cpu.ax.data)) * SIGNED16(operand1);
+    machine.cpu.flagsRegister.set(machine.cpu.ax.data, FlagsRegister::IMUL8);
+opDiv:
+    if(operand1 == 0) {
+        machine.cpu.interruptHandler->call(0);
+    } else {
+        operand2 = machine.cpu.ax.data / operand1;
+
+        if(operand2 > 0xFF) {
+            machine.cpu.interruptHandler->call(0);
+        } else {
+            LOW(machine.cpu.ax.data) = operand2;
+            HIGH(machine.cpu.ax.data) = machine.cpu.ax.data % operand1;
+        }
+    }
+opIDiv:
+    if(operand1 == 0) {
+        machine.cpu.interruptHandler->call(0);
+    } else {
+        tmp = SIGNED16(machine.cpu.ax.data) / SIGNED16(operand1);
+        if(tmp > 0x7F || tmp < 0x80F) {
+            machine.cpu.interruptHandler->call(0);
+        } else {
+            LOW(machine.cpu.ax.data) = tmp;
+            HIGH(machine.cpu.ax.data) = SIGNED16(machine.cpu.ax.data) % SIGNED16(operand1);
+        }
+    }
 }
 
 inline void Interpreter::interpretGrpIw3(Instruction* instruction) {

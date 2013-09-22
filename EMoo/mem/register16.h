@@ -48,7 +48,11 @@ public:
 
         /*result is the result of the shift, operand1 is the result of the shift one step behind*/
         SHL  = 0x10,
-        SHR  = 0x11
+        SHR  = 0x11,
+
+        /*result is the last result stored, LSB(operand1) = AF, LSB+1(operand1) = OF, operand2 = CF*/
+        CLC  = 0x12,
+        MUL  = 0x13
     };
 
     enum Size {
@@ -66,6 +70,7 @@ public:
     const static uint16_t IMUL8 = (uint16_t)IMUL | BIT8;
     const static uint16_t SHL8  = (uint16_t)SHL  | BIT8;
     const static uint16_t SHR8  = (uint16_t)SHR  | BIT8;
+    const static uint16_t MUL8  = (uint16_t)MUL  | BIT8;
 
     const static uint16_t ADD16  = (uint16_t)ADD | BIT16;
     const static uint16_t ADC16  = (uint16_t)ADC | BIT16;
@@ -79,6 +84,7 @@ public:
     const static uint16_t POPF16 = (uint16_t)POPF | BIT16;
     const static uint16_t SHL16  = (uint16_t)SHL  | BIT16;
     const static uint16_t SHR16  = (uint16_t)SHR  | BIT16;
+    const static uint16_t MUL16  = (uint16_t)MUL  | BIT16;
 
     static const uint16_t INSTRUCTION_MASK = 0b0111111111111111;
     static const uint16_t SIZE_MASK        = 0b1000000000000000;
@@ -173,7 +179,9 @@ inline bool FlagsRegister::getCf() {
     case DEC:
         return operand2;
     case IMUL:
-        return result;
+        if(instruction == IMUL8) {
+            return (result & 0xFF00) != 0 && (result & 0xFF00) != 0xFF00;
+        }
     case POPF:
         return operand1 & 1;
     case ROL:
@@ -192,6 +200,14 @@ inline bool FlagsRegister::getCf() {
         }
     case SHR:
         return operand1 & 1;
+    case CLC:
+        return operand2;
+    case MUL:
+        if(instruction == MUL8) {
+            return result & 0xFF00;
+        } else {
+            return result;
+        }
     }
     return false;
 }
@@ -219,6 +235,8 @@ inline bool FlagsRegister::getAf() {
     case RCL:
     case RCR:
         return operand1;
+    case CLC:
+        return operand1 & 1;
     }
     return false;
 }
@@ -259,6 +277,14 @@ inline bool FlagsRegister::getOf() {
             return result & 0x7F;
         } else {
             return result & 0x7FFF;
+        }
+    case CLC:
+        return operand1 & 2;
+    case MUL:
+        if(instruction == MUL8) {
+            return result & 0xFF00;
+        } else {
+            return result;
         }
     }
     return false;

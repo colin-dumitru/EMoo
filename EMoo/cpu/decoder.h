@@ -30,6 +30,7 @@ private:
     void decodeGrpRmwIw(uint32_t& address, Instruction *instruction);
     void decodeCall(uint32_t& address, Instruction *instruction);
     void decodeEnter(uint32_t& address, Instruction *instruction);
+    void decodeGrp3Ib(uint32_t& address, Instruction *instruction);
 
 public:
     Decoder(Ram* ram);
@@ -363,7 +364,7 @@ opOutEdxEax: decodeGeneric(instruction);
 opLock: decodeGeneric(instruction);
 opHlt: decodeGeneric(instruction);
 opCmc: decodeGeneric(instruction);
-opGrpIb3: decodeGenericModRm(address, instruction);
+opGrpIb3: decodeGrp3Ib(address, instruction);
 opGrpIw3: decodeGenericModRm(address, instruction);
 
 error:
@@ -413,7 +414,6 @@ inline void Decoder::decodeModRm(uint32_t& address, Instruction* instruction) {
         instruction->base = mod;
         break;
     }
-
 }
 
 inline void Decoder::decodeGeneric(Instruction *instruction) {
@@ -470,6 +470,17 @@ inline void Decoder::decodeEnter(uint32_t &address, Instruction *instruction) {
     instruction->length += 4;
     instruction->immediate = ram->read16(address);
     instruction->displacement = ram->read8(address + 2);
+}
+
+inline void Decoder::decodeGrp3Ib(uint32_t &address, Instruction *instruction) {
+    instruction->length += 2;
+    decodeModRm(address, instruction);
+
+    /*thanks intel*/
+    if(instruction->reg < 2) {
+        instruction->length += 1;
+        instruction->immediate = ram->read8(address);
+    }
 }
 
 #endif // DECODER_H
