@@ -8,11 +8,13 @@ void runNormal() {
 }
 
 void runTest() {
-    machine.ram.loadFromFile(TEST_FILE, 0xF0000);
+    machine.ram.loadFromFile(BIOS_FILE, 0xF0000);
 }
 
 int main() {
-    /*clock_t start;
+    runTest();
+
+    clock_t start;
     clock_t end;
     int instructions = 0;
 
@@ -29,5 +31,5 @@ int main() {
     printf("end: %lu\n", end);
 
     bool temp = 0x8000;
-    printf("%d\n", temp);*/
+    printf("%d\n", temp);
 }

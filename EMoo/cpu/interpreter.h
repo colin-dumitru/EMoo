@@ -2796,6 +2796,7 @@ opIDiv:
         machine.cpu.interruptHandler->call(0);
     } else {
         tmp = SIGNED16(machine.cpu.ax.data) / SIGNED16(operand1);
+
         if(tmp > 0x7F || tmp < 0x80F) {
             machine.cpu.interruptHandler->call(0);
         } else {
