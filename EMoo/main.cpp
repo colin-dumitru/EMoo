@@ -8,17 +8,16 @@ void runNormal() {
 }
 
 void runTest() {
-    machine.ram.loadFromFile(BIOS_FILE, 0xF0000);
-}
-
-int main() {
-    runTest();
-
     clock_t start;
     clock_t end;
     int instructions = 0;
 
     start = clock();
+
+    machine.reset();
+    machine.ram.loadFromFile(BIOS_FILE, 0xFE000);
+    machine.cpu.ip.data = 0x0000;
+    machine.cpu.cs.data = 0xFFFF;
 
     while(instructions++ < 30000000) {
         machine.step();
@@ -32,4 +31,8 @@ int main() {
 
     bool temp = 0x8000;
     printf("%d\n", temp);
+}
+
+int main() {
+    runTest();
 }
