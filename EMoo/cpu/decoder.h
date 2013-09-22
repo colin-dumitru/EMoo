@@ -31,6 +31,7 @@ private:
     void decodeCall(uint32_t& address, Instruction *instruction);
     void decodeEnter(uint32_t& address, Instruction *instruction);
     void decodeGrp3Ib(uint32_t& address, Instruction *instruction);
+    void decodeGrp3Iw(uint32_t& address, Instruction *instruction);
 
 public:
     Decoder(Ram* ram);
@@ -87,8 +88,8 @@ inline void Decoder::decodeInstruction(uint32_t& address, Instruction *instructi
         /*0xD8*/ &&opFadd, &&opFcos, &&opFiadd, &&opFist, &&opFsub, &&opFst, &&opFmulp, &&Fnstsw,
         /*0xE0*/ &&opLoopnz, &&opLoopz, &&opLoop, &&opJcxz, &&opInAlIb, &&opEaxIb, &&opOutIbAl, &&opOutIbEax,
         /*0xE8*/ &&opCallIw, &&opJmp, &&opJmpFar, &&opJmpShort, &&opInAlEdx, &&opInEaxEdx, &&opOutEdxAl, &&opOutEdxEax,
-        /*0xF0*/ &&opLock, &&error, &&error, &&error, &&opHlt, &&opCmc, &&opGrpIb3, &&opGrpIw3
-        /*0xF8*/
+        /*0xF0*/ &&opLock, &&error, &&error, &&error, &&opHlt, &&opCmc, &&opGrpIb3, &&opGrpIw3,
+        /*0xF8*/ &&opClc, &&opStc, &&opCli, &&opSti, &&opCld, &&opStd, &&opGrp4, &&opGrp5
     };
 
     instruction->opcode = ram->buffer[address++];
@@ -365,7 +366,16 @@ opLock: decodeGeneric(instruction);
 opHlt: decodeGeneric(instruction);
 opCmc: decodeGeneric(instruction);
 opGrpIb3: decodeGrp3Ib(address, instruction);
-opGrpIw3: decodeGenericModRm(address, instruction);
+opGrpIw3: decodeGrp3Iw(address, instruction);
+
+opClc: decodeGeneric(instruction);
+opStc: decodeGeneric(instruction);
+opCli: decodeGeneric(instruction);
+opSti: decodeGeneric(instruction);
+opCld: decodeGeneric(instruction);
+opStd: decodeGeneric(instruction);
+opGrp4: decodeGenericModRm(address, instruction);
+opGrp5: decodeGenericModRm(address, instruction);
 
 error:
     ERR("invalid decode opcode: %d", instruction->opcode);
@@ -482,5 +492,17 @@ inline void Decoder::decodeGrp3Ib(uint32_t &address, Instruction *instruction) {
         instruction->immediate = ram->read8(address);
     }
 }
+
+inline void Decoder::decodeGrp3Iw(uint32_t &address, Instruction *instruction) {
+    instruction->length += 2;
+    decodeModRm(address, instruction);
+
+    /*thanks intel*/
+    if(instruction->reg < 2) {
+        instruction->length += 2;
+        instruction->immediate = ram->read16(address);
+    }
+}
+
 
 #endif // DECODER_H

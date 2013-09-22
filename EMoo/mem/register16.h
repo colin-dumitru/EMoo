@@ -51,8 +51,12 @@ public:
         SHR  = 0x11,
 
         /*result is the last result stored, LSB(operand1) = AF, LSB+1(operand1) = OF, operand2 = CF*/
-        CLC  = 0x12,
-        MUL  = 0x13
+        CMC  = 0x12,
+        MUL  = 0x13,
+
+        /*operand1 is the AF flag, operand2 is the OF, result is the last result*/
+        CLC  = 0x14,
+        STC  = 0x15
     };
 
     enum Size {
@@ -64,6 +68,8 @@ public:
     const static uint16_t ADC8  = (uint16_t)ADC | BIT8;
     const static uint16_t SUB8  = (uint16_t)SUB | BIT8;
     const static uint16_t SBB8  = (uint16_t)SBB | BIT8;
+    const static uint16_t INC8  = (uint16_t)INC | BIT8;
+    const static uint16_t DEC8  = (uint16_t)DEC | BIT8;
     const static uint16_t NEG8  = (uint16_t)NEG | BIT8;
     const static uint16_t LOG8  = (uint16_t)LOG | BIT8;
     const static uint16_t DAA8  = (uint16_t)DAA | BIT8;
@@ -100,6 +106,7 @@ public:
 
     void set(uint16_t operand1, uint16_t operand2, uint16_t result, uint16_t instruction);
     void set(uint16_t result, uint16_t instruction);
+    void set(uint16_t instruction);
 
     bool getZf();
     bool getPf();
@@ -118,6 +125,10 @@ inline void FlagsRegister::set(uint16_t operand1, uint16_t operand2, uint16_t re
 
 inline void FlagsRegister::set(uint16_t result, uint16_t instruction) {
     this->result = result;
+    this->instruction = instruction;
+}
+
+inline void FlagsRegister::set(uint16_t instruction) {
     this->instruction = instruction;
 }
 
@@ -200,7 +211,7 @@ inline bool FlagsRegister::getCf() {
         }
     case SHR:
         return operand1 & 1;
-    case CLC:
+    case CMC:
         return operand2;
     case MUL:
         if(instruction == MUL8) {
@@ -208,6 +219,10 @@ inline bool FlagsRegister::getCf() {
         } else {
             return result;
         }
+    case CLC:
+        return false;
+    case STC:
+        return true;
     }
     return false;
 }
@@ -235,8 +250,11 @@ inline bool FlagsRegister::getAf() {
     case RCL:
     case RCR:
         return operand1;
-    case CLC:
+    case CMC:
         return operand1 & 1;
+    case CLC:
+    case STC:
+        return operand1;
     }
     return false;
 }
@@ -278,7 +296,7 @@ inline bool FlagsRegister::getOf() {
         } else {
             return result & 0x7FFF;
         }
-    case CLC:
+    case CMC:
         return operand1 & 2;
     case MUL:
         if(instruction == MUL8) {
@@ -286,6 +304,9 @@ inline bool FlagsRegister::getOf() {
         } else {
             return result;
         }
+    case CLC:
+    case STC:
+        return operand2;
     }
     return false;
 }
