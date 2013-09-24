@@ -2143,71 +2143,19 @@ inline void Interpreter::interpretWait(){
 }
 
 inline void Interpreter::interpretPushF(){
-    operand1 =
-            (uint16_t)machine.cpu.flagsRegister.getCf() |
-            ((uint16_t)machine.cpu.flagsRegister.getPf() << 2) |
-            ((uint16_t)machine.cpu.flagsRegister.getAf() << 4) |
-            ((uint16_t)machine.cpu.flagsRegister.getZf() << 6) |
-            ((uint16_t)machine.cpu.flagsRegister.getSf() << 7) |
-            ((uint16_t)machine.cpu.flagsRegister.tf << 8) |
-            ((uint16_t)machine.cpu.flagsRegister.itf << 9) |
-            ((uint16_t)machine.cpu.flagsRegister.df << 10) |
-            ((uint16_t)machine.cpu.flagsRegister.getOf() << 11);
-
-    push(operand1);
+    push(machine.cpu.flagsRegister.toWord());
 }
 
 inline void Interpreter::interpretPopF(){
-    static const uint16_t resultTable[] = {
-        0, 0, 0, 2,
-        0, 0, 0x8000, 0x8002
-    };
-
-    operand1 = pop();
-
-    machine.cpu.flagsRegister.tf = (operand1 & 256 /*1 << 8*/) != 0;
-    machine.cpu.flagsRegister.itf = (operand1 & 512 /*1 << 9*/) != 0;
-    machine.cpu.flagsRegister.df = (operand1 & 1024 /*1 << 10*/) != 0;
-
-    /*00 01 02*/
-    /*PF ZF SF*/
-    operand2 =
-            ((operand1 & 4 /*1 << 2*/ ) >> 2) |
-            ((operand1 & 64 /*1 << 6*/ ) >> 5) |
-            ((operand1 & 128 /*1 << 7*/ ) >> 5);
-
-    result = resultTable[operand2];
-
-    machine.cpu.flagsRegister.set(operand1, 0, result, FlagsRegister::POPF16);
+    machine.cpu.flagsRegister.fromWord(pop());
 }
 
 inline void Interpreter::interpretSahF(){
-    static const uint16_t resultTable[] = {
-        0, 0, 0, 2,
-        0, 0, 0x8000, 0x8002
-    };
-
-    operand1 = *machine.cpu.registerAddressTable[machine.cpu.AH];
-
-    /*00 01 02*/
-    /*PF ZF SF*/
-    operand2 =
-            ((operand1 & 4 /*1 << 2*/ ) >> 2) |
-            ((operand1 & 64 /*1 << 6*/ ) >> 5) |
-            ((operand1 & 128 /*1 << 7*/ ) >> 5);
-
-    result = resultTable[operand2];
-
-    machine.cpu.flagsRegister.set(operand1, 0, result, FlagsRegister::POPF16);
+    machine.cpu.flagsRegister.fromByte(*machine.cpu.registerAddressTable[machine.cpu.AH]);
 }
 
 inline void Interpreter::interpretLahF(){
-    *machine.cpu.registerAddressTable[machine.cpu.AH] =
-            (uint16_t)machine.cpu.flagsRegister.getCf() |
-            ((uint16_t)machine.cpu.flagsRegister.getPf() << 2) |
-            ((uint16_t)machine.cpu.flagsRegister.getAf() << 4) |
-            ((uint16_t)machine.cpu.flagsRegister.getZf() << 6) |
-            ((uint16_t)machine.cpu.flagsRegister.getSf() << 7);
+    *machine.cpu.registerAddressTable[machine.cpu.AH] = machine.cpu.flagsRegister.toByte();
 }
 
 inline void Interpreter::interpretMovAlRmb(Instruction *instruction) {

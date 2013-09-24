@@ -114,6 +114,12 @@ public:
     bool getCf();
     bool getAf();
     bool getOf();
+
+    uint16_t toWord();
+    void fromWord(uint16_t value);
+
+    uint8_t toByte();
+    void fromByte(uint8_t value);
 };
 
 inline void FlagsRegister::set(uint16_t operand1, uint16_t operand2, uint16_t result, uint16_t instruction) {
@@ -309,6 +315,66 @@ inline bool FlagsRegister::getOf() {
         return operand2;
     }
     return false;
+}
+
+inline uint16_t FlagsRegister::toWord() {
+    return (uint16_t)getCf() |
+            ((uint16_t)getPf() << 2) |
+            ((uint16_t)getAf() << 4) |
+            ((uint16_t)getZf() << 6) |
+            ((uint16_t)getSf() << 7) |
+            ((uint16_t)tf << 8) |
+            ((uint16_t)itf << 9) |
+            ((uint16_t)df << 10) |
+            ((uint16_t)getOf() << 11);
+}
+
+inline void FlagsRegister::fromWord(uint16_t value) {
+    static const uint16_t resultTable[] = {
+        0, 0, 0, 2,
+        0, 0, 0x8000, 0x8002
+    };
+
+    tf = (value & 256 /*1 << 8*/) != 0;
+    itf = (value & 512 /*1 << 9*/) != 0;
+    df = (value & 1024 /*1 << 10*/) != 0;
+
+    /*00 01 02*/
+    /*PF ZF SF*/
+    operand2 =
+            ((value & 4 /*1 << 2*/ ) >> 2) |
+            ((value & 64 /*1 << 6*/ ) >> 5) |
+            ((value & 128 /*1 << 7*/ ) >> 5);
+
+    operand1 = value;
+    result = resultTable[operand2];
+    instruction = FlagsRegister::POPF16;
+}
+
+inline uint8_t FlagsRegister::toByte() {
+    return (uint16_t)getCf() |
+            ((uint16_t)getPf() << 2) |
+            ((uint16_t)getAf() << 4) |
+            ((uint16_t)getZf() << 6) |
+            ((uint16_t)getSf() << 7);
+}
+
+inline void FlagsRegister::fromByte(uint8_t value) {
+    static const uint16_t resultTable[] = {
+        0, 0, 0, 2,
+        0, 0, 0x8000, 0x8002
+    };
+
+    /*00 01 02*/
+    /*PF ZF SF*/
+    operand2 =
+            ((value & 4 /*1 << 2*/ ) >> 2) |
+            ((value & 64 /*1 << 6*/ ) >> 5) |
+            ((value & 128 /*1 << 7*/ ) >> 5);
+
+    operand1 = value;
+    result = resultTable[operand2];
+    instruction = FlagsRegister::POPF16;
 }
 
 
