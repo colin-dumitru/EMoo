@@ -4,7 +4,14 @@
 #include <time.h>
 
 void runNormal() {
+    machine.reset();
+    machine.ram.loadFromFile(BIOS_FILE, 0xFE000);
+    machine.cpu.ip.data = 0x0000;
+    machine.cpu.cs.data = 0xFFFF;
 
+    while(1) {
+        machine.step();
+    }
 }
 
 void runTest() {
@@ -35,4 +42,5 @@ void runTest() {
 
 int main() {
     runTest();
+    //runNormal();
 }

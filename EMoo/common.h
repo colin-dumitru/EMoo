@@ -24,6 +24,7 @@ extern Machine machine;
 #define LOW(op) *(uint8_t*)(&(op))
 #define HIGH(op) *(((uint8_t*)(&(op))) + 1)
 #define WORD(op) (uint16_t*)(op)
+#define SIGNED8(op) (int8_t)(op)
 #define SIGNED16(op) (int16_t)(op)
 
 #endif

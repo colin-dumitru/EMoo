@@ -4,13 +4,15 @@
 #include "config.h"
 #include "common.h"
 
+MACHINE_AWARE
+
 
 class InterruptHandler
 {
 public:
     InterruptHandler();
 
-    void call(uint8_t interrupt);
+    void call(uint16_t interrupt);
 };
 
 #endif // INTERRUPTHANDLER_H

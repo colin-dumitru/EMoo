@@ -38,9 +38,6 @@ private:
     uint16_t decodeBaseRegisterValue(Instruction* instruction);
     uint16_t decodeRelativeAddress(Instruction* instruction);
 
-    void push(uint16_t value);
-    uint16_t pop();
-
     bool isLoopFinished(Instruction *instruction);
     void processLoop(Instruction *instruction, uint8_t operandSize);
     void interpretBitGrp8(Instruction *instruction);
@@ -263,7 +260,7 @@ private:
     void interpretGrpRmbIb2(Instruction* instruction);
     void interpretGrpRmwIb2(Instruction* instruction);
     void interpretRetIw(Instruction* instruction);
-    void interpretRet(Instruction *instruction);
+    void interpretRet();
     void interpretLes(Instruction* instruction);
     void interpretLds(Instruction* instruction);
     void interpretMovRmbIb(Instruction* instruction);
@@ -272,11 +269,11 @@ private:
     void interpretEnter(Instruction* instruction);
     void interpretLeave();
     void interpretRetfIw(Instruction* instruction);
-    void interpretRetf(Instruction* instruction);
+    void interpretRetf();
     void interpretInt3();
     void interpretIntIb(Instruction* instruction);
     void interpretInto();
-    void interpretIret(Instruction* instruction);
+    void interpretIret();
 
     void interpretGrpRmb1(Instruction* instruction);
     void interpretGrpRmw1(Instruction* instruction);
@@ -326,7 +323,10 @@ public:
 
     void reset();
 
-    uint8_t interpret(uint32_t address);
+    void push(uint16_t value);
+    uint16_t pop();
+
+    void interpret(uint32_t address);
 };
 
 inline void Interpreter::decodeAddress8(Instruction *instruction) {
@@ -379,14 +379,16 @@ inline uint16_t Interpreter::pop() {
     return tempValue;
 }
 
-inline uint8_t Interpreter::interpret(uint32_t address) {
+inline void Interpreter::interpret(uint32_t address) {
+    static FILE* out = fopen("/tmp/x86/mine", "w");
+
     if(!cache.cacheSet[address]) {
         cache.cacheSet[address] = true;
         machine.cpu.decoder->decode(address, &cache.instructionCache[address]);
     }
+    machine.cpu.ip.data += cache.instructionCache[address].length;
+    fprintf(out, "%x %x %x %x\n", machine.ram.buffer[address], machine.ram.buffer[address + 1], machine.ram.buffer[address + 2], machine.ram.buffer[address + 3]);
     interpret(&cache.instructionCache[address]);
-
-    return cache.instructionCache[address].length;
 }
 
 inline bool Interpreter::isLoopFinished(Instruction* instruction) {
@@ -770,7 +772,7 @@ opMovEdiIw: return interpretMovEdiIw(instruction);
 opGrpRmbIb2: return interpretGrpRmbIb2(instruction);
 opGrpRmwIb2: return interpretGrpRmwIb2(instruction);
 opRetIw: return interpretRetIw(instruction);
-opRet: return interpretRet(instruction);
+opRet: return interpretRet();
 opLes: return interpretLes(instruction);
 opLds: return interpretLds(instruction);
 opMovRmbIb: return interpretMovRmbIb(instruction);
@@ -779,11 +781,11 @@ opMovRmwIw: return interpretMovRmwIw(instruction);
 opEnter: return interpretEnter(instruction);
 opLeave: return interpretLeave();
 opRetfIw: return interpretRetfIw(instruction);
-opRetf: return interpretRetf(instruction);
+opRetf: return interpretRetf();
 opInt3: return interpretInt3();
 opIntIb: return interpretIntIb(instruction);
 opInto: return interpretInto();
-opIret: return interpretIret(instruction);
+opIret: return interpretIret();
 
 opGrpRmb1: return interpretGrpRmb1(instruction);
 opGrpRmw1: return interpretGrpRmw1(instruction);
@@ -2131,10 +2133,10 @@ inline void Interpreter::interpretCwd(){
 
 inline void Interpreter::interpretCall(Instruction *instruction){
     push(machine.cpu.cs.data);
-    push(machine.cpu.ip.data + instruction->length);
+    push(machine.cpu.ip.data);
 
     /*instruction length is always added after interpreter return*/
-    machine.cpu.ip.data = instruction->immediate - instruction->length;
+    machine.cpu.ip.data = instruction->immediate;
     machine.cpu.cs.data = instruction->displacement;
 }
 
@@ -2444,14 +2446,12 @@ inline void Interpreter::interpretGrpRmwIb2(Instruction *instruction) {
 }
 
 inline void Interpreter::interpretRetIw(Instruction *instruction) {
-    /*instruction length is always added after instruction interpret*/
-    machine.cpu.ip.data = pop() - instruction->length;
+    machine.cpu.ip.data = pop();
     machine.cpu.sp.data += instruction->immediate;
 }
 
-inline void Interpreter::interpretRet(Instruction* instruction) {
-    /*instruction length is always added after instruction interpret*/
-    machine.cpu.ip.data = pop() - instruction->length;
+inline void Interpreter::interpretRet() {
+    machine.cpu.ip.data = pop();
 }
 
 inline void Interpreter::interpretLes(Instruction *instruction) {
@@ -2506,15 +2506,13 @@ inline void Interpreter::interpretLeave() {
 }
 
 inline void Interpreter::interpretRetfIw(Instruction* instruction) {
-    /*instruction length is always added after instruction interpret*/
-    machine.cpu.ip.data = pop() - instruction->length;
+    machine.cpu.ip.data = pop();
     machine.cpu.cs.data = pop();
     machine.cpu.sp.data += instruction->immediate;
 }
 
-inline void Interpreter::interpretRetf(Instruction* instruction) {
-    /*instruction length is always added after instruction interpret*/
-    machine.cpu.ip.data = pop() - instruction->length;
+inline void Interpreter::interpretRetf() {
+    machine.cpu.ip.data = pop();
     machine.cpu.cs.data = pop();
 }
 
@@ -2532,9 +2530,8 @@ inline void Interpreter::interpretInto() {
     }
 }
 
-inline void Interpreter::interpretIret(Instruction* instruction) {
-    /*instruction length is always added after instruction interpret*/
-    machine.cpu.ip.data = pop() - instruction->length;
+inline void Interpreter::interpretIret() {
+    machine.cpu.ip.data = pop();
     machine.cpu.cs.data = pop();
 
     /*flags*/
@@ -2631,7 +2628,7 @@ inline void Interpreter::interpretLoopnz(Instruction *instruction) {
     machine.cpu.cx.data -= 1;
 
     if(machine.cpu.cx.data && !machine.cpu.flagsRegister.getZf()) {
-        machine.cpu.ip.data += SIGNED16(instruction->immediate);
+        machine.cpu.ip.data += SIGNED8(instruction->immediate);
     }
 }
 
@@ -2639,7 +2636,7 @@ inline void Interpreter::interpretLoopz(Instruction *instruction) {
     machine.cpu.cx.data -= 1;
 
     if(machine.cpu.cx.data && machine.cpu.flagsRegister.getZf()) {
-        machine.cpu.ip.data += SIGNED16(instruction->immediate);
+        machine.cpu.ip.data += SIGNED8(instruction->immediate);
     }
 }
 
@@ -2647,13 +2644,13 @@ inline void Interpreter::interpretLoop(Instruction *instruction) {
     machine.cpu.cx.data -= 1;
 
     if(machine.cpu.cx.data) {
-        machine.cpu.ip.data += SIGNED16(instruction->immediate);
+        machine.cpu.ip.data += SIGNED8(instruction->immediate);
     }
 }
 
 inline void Interpreter::interpretJcxz(Instruction *instruction) {
     if(!machine.cpu.cx.data) {
-        machine.cpu.ip.data += SIGNED16(instruction->immediate);
+        machine.cpu.ip.data += SIGNED8(instruction->immediate);
     }
 }
 
@@ -2674,7 +2671,7 @@ inline void Interpreter::interpretOutIbEax(Instruction *instruction) {
 }
 
 inline void Interpreter::interpretCallIw(Instruction *instruction) {
-    push(machine.cpu.ip.data + instruction->length);
+    push(machine.cpu.ip.data);
     machine.cpu.ip.data += instruction->immediate;
 }
 
@@ -2733,17 +2730,22 @@ inline void Interpreter::interpretGrpIb3(Instruction* instruction) {
 
 opTest:
     machine.cpu.flagsRegister.set(operand1 & instruction->immediate, machine.cpu.flagsRegister.LOG8);
+    return;
 opNot:
     *rmAddress = ~operand1;
+    return;
 opNeg:
     *rmAddress = (~operand1) + 1;
     machine.cpu.flagsRegister.set(0, operand1, *rmAddress, machine.cpu.flagsRegister.NEG8);
+    return;
 opMul:
     machine.cpu.ax.data = LOW(machine.cpu.ax.data) * operand1;
     machine.cpu.flagsRegister.set(machine.cpu.ax.data, FlagsRegister::MUL8);
+    return;
 opIMul:
     machine.cpu.ax.data = SIGNED16(LOW(machine.cpu.ax.data)) * SIGNED16(operand1);
     machine.cpu.flagsRegister.set(machine.cpu.ax.data, FlagsRegister::IMUL8);
+    return;
 opDiv:
     if(operand1 == 0) {
         machine.cpu.interruptHandler->call(0);
@@ -2757,6 +2759,7 @@ opDiv:
             HIGH(machine.cpu.ax.data) = machine.cpu.ax.data % operand1;
         }
     }
+    return;
 opIDiv:
     if(operand1 == 0) {
         machine.cpu.interruptHandler->call(0);
@@ -2786,11 +2789,14 @@ inline void Interpreter::interpretGrpIw3(Instruction* instruction) {
 
 opTest:
     machine.cpu.flagsRegister.set(operand1 & instruction->immediate, machine.cpu.flagsRegister.LOG16);
+    return;
 opNot:
     *WORD(rmAddress) = ~operand1;
+    return;
 opNeg:
     *WORD(rmAddress) = (~operand1) + 1;
     machine.cpu.flagsRegister.set(0, operand1, *WORD(rmAddress), machine.cpu.flagsRegister.NEG16);
+    return;
 opMul:
     utmp = machine.cpu.ax.data * operand1;
 
@@ -2798,6 +2804,7 @@ opMul:
     utmp >>= 16;
     machine.cpu.dx.data = utmp;
     machine.cpu.flagsRegister.set(utmp, FlagsRegister::MUL16);
+    return;
 opIMul:
     tmp = SIGNED16(machine.cpu.ax.data) * SIGNED16(operand1);
 
@@ -2805,6 +2812,7 @@ opIMul:
     tmp >>= 16;
     machine.cpu.dx.data = tmp;
     machine.cpu.flagsRegister.set(tmp, FlagsRegister::IMUL8);
+    return;
 opDiv:
     if(operand1 == 0) {
         machine.cpu.interruptHandler->call(0);
@@ -2819,6 +2827,7 @@ opDiv:
             machine.cpu.dx.data = ((machine.cpu.dx.data << 16) | machine.cpu.ax.data) % operand1;
         }
     }
+    return;
 opIDiv:
     if(operand1 == 0) {
         machine.cpu.interruptHandler->call(0);
@@ -2872,6 +2881,7 @@ opInc:
     *rmAddress = operand1 + 1;
 
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), *rmAddress, FlagsRegister::INC8);
+    return;
 opDec:
     operand1 = *rmAddress;
     *rmAddress = operand1 - 1;
@@ -2892,26 +2902,32 @@ opInc:
     *WORD(rmAddress) = operand1 + 1;
 
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), *WORD(rmAddress), FlagsRegister::INC16);
+    return;
 opDec:
     operand1 = *WORD(rmAddress);
     *WORD(rmAddress) = operand1 - 1;
 
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), *WORD(rmAddress), FlagsRegister::DEC16);
+    return;
 
 opCall:
-    push(machine.cpu.ip.data + instruction->length);
-    machine.cpu.ip.data = *WORD(rmAddress) - instruction->length;
+    push(machine.cpu.ip.data);
+    machine.cpu.ip.data = *WORD(rmAddress);
+    return;
 opCallFar:
     push(machine.cpu.cs.data);
-    push(machine.cpu.ip.data + instruction->length);
+    push(machine.cpu.ip.data);
 
-    machine.cpu.ip.data = *WORD(rmAddress) - instruction->length;
+    machine.cpu.ip.data = *WORD(rmAddress);
     machine.cpu.cs.data = *WORD(rmAddress + 2);
+    return;
 opJmp:
-    machine.cpu.ip.data = *WORD(rmAddress) - instruction->length;
+    machine.cpu.ip.data = *WORD(rmAddress);
+    return;
 opJmpFar:
-    machine.cpu.ip.data = *WORD(rmAddress) - instruction->length;
+    machine.cpu.ip.data = *WORD(rmAddress);
     machine.cpu.cs.data = *WORD(rmAddress + 2);
+    return;
 opPush:
     push(*(WORD(rmAddress)));
 }

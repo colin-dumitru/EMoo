@@ -12,7 +12,7 @@ void Machine::reset() {
 }
 
 void Machine:: step() {
-    cpu.ip.data += cpu.interpreter->interpret(uint32_t((cpu.cs.data << 4) + cpu.ip.data));
+    cpu.interpreter->interpret(uint32_t((cpu.cs.data << 4) + cpu.ip.data));
 }
 
 Machine machine;
