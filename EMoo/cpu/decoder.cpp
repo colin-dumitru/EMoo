@@ -30,8 +30,6 @@ Decoder::Decoder(Ram* ram) : ram(ram)
     prefixTable[0x26] = true;
     prefixTable[0x64] = true;
     prefixTable[0x65] = true;
-    prefixTable[0x2E] = true;
-    prefixTable[0x3E] = true;
     prefixTable[0x66] = true;
     prefixTable[0x67] = true;
 
@@ -44,8 +42,6 @@ Decoder::Decoder(Ram* ram) : ram(ram)
     prefixEqTable[0x26] = Instruction::ES;
     prefixEqTable[0x64] = Instruction::FS;
     prefixEqTable[0x65] = Instruction::GS;
-    prefixEqTable[0x2E] = Instruction::BRANCH_NOT_TAKEN;
-    prefixEqTable[0x3E] = Instruction::BRANCH_TAKEN;
     prefixEqTable[0x66] = Instruction::OPERAND_SIZE;
     prefixEqTable[0x67] = Instruction::ADDRESS_SIZE;
 }

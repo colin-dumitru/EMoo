@@ -387,7 +387,7 @@ inline void Interpreter::interpret(uint32_t address) {
         machine.cpu.decoder->decode(address, &cache.instructionCache[address]);
     }
     machine.cpu.ip.data += cache.instructionCache[address].length;
-    fprintf(out, "%x %x %x %x\n", machine.ram.buffer[address], machine.ram.buffer[address + 1], machine.ram.buffer[address + 2], machine.ram.buffer[address + 3]);
+    fprintf(out, "%x %x %x %x %x\n", machine.ram.buffer[address], machine.ram.buffer[address + 1], machine.ram.buffer[address + 2], machine.ram.buffer[address + 3], machine.cpu.bx.data);
     interpret(&cache.instructionCache[address]);
 }
 
@@ -1488,114 +1488,114 @@ inline void Interpreter::interpretAas() {
 
 inline void Interpreter::interpretIncEax() {
     operand1 = machine.cpu.ax.data;
-    result = operand1 + 1;
+    machine.cpu.ax.data = operand1 + 1;
 
-    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), result, FlagsRegister::INC16);
+    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.ax.data, FlagsRegister::INC16);
 }
 
 inline void Interpreter::interpretIncEcx() {
     operand1 = machine.cpu.cx.data;
-    result = operand1 + 1;
+    machine.cpu.cx.data = operand1 + 1;
 
-    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), result, FlagsRegister::INC16);
+    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.cx.data, FlagsRegister::INC16);
 }
 
 inline void Interpreter::interpretIncEdx() {
     operand1 = machine.cpu.dx.data;
-    result = operand1 + 1;
+    machine.cpu.dx.data = operand1 + 1;
 
-    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), result, FlagsRegister::INC16);
+    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.dx.data, FlagsRegister::INC16);
 }
 
 inline void Interpreter::interpretIncEbx() {
     operand1 = machine.cpu.bx.data;
-    result = operand1 + 1;
+    machine.cpu.bx.data = operand1 + 1;
 
-    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), result, FlagsRegister::INC16);
+    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.bx.data, FlagsRegister::INC16);
 }
 
 inline void Interpreter::interpretIncEsp() {
     operand1 = machine.cpu.sp.data;
-    result = operand1 + 1;
+    machine.cpu.sp.data = operand1 + 1;
 
-    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), result, FlagsRegister::INC16);
+    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.sp.data, FlagsRegister::INC16);
 }
 
 inline void Interpreter::interpretIncEbp() {
     operand1 = machine.cpu.bp.data;
-    result = operand1 + 1;
+    machine.cpu.bp.data = operand1 + 1;
 
-    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), result, FlagsRegister::INC16);
+    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.bp.data, FlagsRegister::INC16);
 }
 
 inline void Interpreter::interpretIncEsi() {
     operand1 = machine.cpu.si.data;
-    result = operand1 + 1;
+    machine.cpu.si.data = operand1 + 1;
 
-    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), result, FlagsRegister::INC16);
+    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.si.data, FlagsRegister::INC16);
 }
 
 inline void Interpreter::interpretIncEdi() {
     operand1 = machine.cpu.di.data;
-    result = operand1 + 1;
+    machine.cpu.di.data = operand1 + 1;
 
-    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), result, FlagsRegister::INC16);
+    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.di.data, FlagsRegister::INC16);
 }
 
 inline void Interpreter::interpretDecEax() {
     operand1 = machine.cpu.ax.data;
-    result = operand1 - 1;
+    machine.cpu.ax.data = operand1 - 1;
 
-    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), result, FlagsRegister::DEC16);
+    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.ax.data, FlagsRegister::DEC16);
 }
 
 inline void Interpreter::interpretDecEcx() {
     operand1 = machine.cpu.cx.data;
-    result = operand1 - 1;
+    machine.cpu.cx.data = operand1 - 1;
 
-    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), result, FlagsRegister::DEC16);
+    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.cx.data, FlagsRegister::DEC16);
 }
 
 inline void Interpreter::interpretDecEdx() {
     operand1 = machine.cpu.dx.data;
-    result = operand1 - 1;
+    machine.cpu.dx.data = operand1 - 1;
 
-    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), result, FlagsRegister::DEC16);
+    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.dx.data, FlagsRegister::DEC16);
 }
 
 inline void Interpreter::interpretDecEbx() {
     operand1 = machine.cpu.bx.data;
-    result = operand1 - 1;
+    machine.cpu.bx.data = operand1 - 1;
 
-    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), result, FlagsRegister::DEC16);
+    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.bx.data, FlagsRegister::DEC16);
 }
 
 inline void Interpreter::interpretDecEsp() {
     operand1 = machine.cpu.sp.data;
-    result = operand1 - 1;
+    machine.cpu.sp.data = operand1 - 1;
 
-    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), result, FlagsRegister::DEC16);
+    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.sp.data, FlagsRegister::DEC16);
 }
 
 inline void Interpreter::interpretDecEbp() {
     operand1 = machine.cpu.bp.data;
-    result = operand1 - 1;
+    machine.cpu.bp.data = operand1 - 1;
 
-    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), result, FlagsRegister::DEC16);
+    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.bp.data, FlagsRegister::DEC16);
 }
 
 inline void Interpreter::interpretDecEsi() {
     operand1 = machine.cpu.si.data;
-    result = operand1 - 1;
+    machine.cpu.si.data = operand1 - 1;
 
-    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), result, FlagsRegister::DEC16);
+    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.si.data, FlagsRegister::DEC16);
 }
 
 inline void Interpreter::interpretDecEdi() {
     operand1 = machine.cpu.di.data;
-    result = operand1 - 1;
+    machine.cpu.di.data = operand1 - 1;
 
-    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), result, FlagsRegister::DEC16);
+    machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.di.data, FlagsRegister::DEC16);
 }
 
 inline void Interpreter::interpretPushEax() {
@@ -1996,7 +1996,7 @@ opFlagSub:
 }
 
 inline void Interpreter::interpretTestRmbRb(Instruction *instruction) {
-    decodeAddress16(instruction);
+    decodeAddress8(instruction);
 
     operand1 = *rmAddress;
     operand2 = *machine.cpu.registerAddressTable[instruction->reg];
@@ -2018,7 +2018,7 @@ inline void Interpreter::interpretTestRmwRw(Instruction *instruction) {
 }
 
 inline void Interpreter::interpretXchgRmbRb(Instruction *instruction) {
-    decodeAddress16(instruction);
+    decodeAddress8(instruction);
 
     operand1 = *rmAddress;
     *rmAddress = *machine.cpu.registerAddressTable[instruction->reg];
@@ -2034,7 +2034,7 @@ inline void Interpreter::interpretXchgRmwRw(Instruction *instruction) {
 }
 
 inline void Interpreter::interpretMovRmbRb(Instruction *instruction) {
-    decodeAddress16(instruction);
+    decodeAddress8(instruction);
 
     *rmAddress = *machine.cpu.registerAddressTable[instruction->reg];
 }
@@ -2046,7 +2046,7 @@ inline void Interpreter::interpretMovRmwRw(Instruction *instruction) {
 }
 
 inline void Interpreter::interpretMovRbRmb(Instruction *instruction) {
-    decodeAddress16(instruction);
+    decodeAddress8(instruction);
 
     *machine.cpu.registerAddressTable[instruction->reg] = *rmAddress;
 }

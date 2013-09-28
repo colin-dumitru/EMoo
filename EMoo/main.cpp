@@ -26,7 +26,7 @@ void runTest() {
     machine.cpu.ip.data = 0x0000;
     machine.cpu.cs.data = 0xFFFF;
 
-    while(instructions++ < 30000000) {
+    while(instructions++ < 1000000) {
         machine.step();
     }
 

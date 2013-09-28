@@ -29,8 +29,6 @@ public:
         ES               = 0b00010000,
         FS               = 0b00010100,
         GS               = 0b00011000,
-        BRANCH_TAKEN     = 0b00100000,
-        BRANCH_NOT_TAKEN = 0b01000000,
 
         OPERAND_SIZE     = 0b00000010,
 

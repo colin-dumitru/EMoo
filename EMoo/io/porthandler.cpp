@@ -5,7 +5,7 @@ PortHandler::PortHandler()
 }
 
 uint8_t PortHandler::in8(uint16_t port){
-
+    printf("%x\n", port);
 }
 
 uint8_t PortHandler::in16(uint16_t port) {
