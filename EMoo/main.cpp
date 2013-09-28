@@ -29,7 +29,7 @@ void runTest() {
     machine.cpu.cs.data = 0xFFFF;
 
     while(instructions++ < 1000000) {
-        if(instructions == 361449) {
+        if(instructions == 372131) {
             int a = 0;
         }
         machine.step();

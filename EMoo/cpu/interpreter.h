@@ -42,7 +42,12 @@ private:
     uint16_t decodeRelativeAddress(Instruction* instruction);
 
     bool isLoopFinished(Instruction *instruction);
+    /*also checks the Z flag*/
+    bool isLoopFinishedZ(Instruction *instruction);
     void processLoop(Instruction *instruction, uint8_t operandSize);
+    /*also checks the Z flag*/
+    void processLoopZ(Instruction *instruction, uint8_t operandSize);
+
     void interpretBitGrp8(Instruction *instruction);
     void interpretBitGrp16(Instruction *instruction);
 
@@ -391,12 +396,20 @@ inline void Interpreter::interpret(uint32_t address) {
         machine.cpu.decoder->decode(address, &cache.instructionCache[address]);
     }
     machine.cpu.ip.data += cache.instructionCache[address].length;
-    fprintf(out, "%x %x %x %x %x %x\n",
-            machine.ram.buffer[address], machine.ram.buffer[address + 1], machine.ram.buffer[address + 2], machine.ram.buffer[address + 3], machine.cpu.bx.data, machine.ram.buffer[0x3e7]);
+    fprintf(out, "%x %x %x %x %x\n", machine.ram.buffer[address], machine.ram.buffer[address + 1], machine.ram.buffer[address + 2], machine.ram.buffer[address + 3], machine.cpu.ax.data);
     interpret(&cache.instructionCache[address]);
 }
 
 inline bool Interpreter::isLoopFinished(Instruction* instruction) {
+    switch (instruction->prefix & Instruction::GROUP_1_MASK) {
+    case Instruction::REP:
+    case Instruction::REPNE:
+        return machine.cpu.cx.data == 0;
+    }
+    return true;
+}
+
+inline bool Interpreter::isLoopFinishedZ(Instruction* instruction) {
     switch (instruction->prefix & Instruction::GROUP_1_MASK) {
     case Instruction::REP:
         return machine.cpu.cx.data == 0 || !machine.cpu.flagsRegister.getZf();
@@ -417,6 +430,22 @@ inline void Interpreter::processLoop(Instruction *instruction, uint8_t operandSi
 
     /*-1 if the loop has not finished, 0 otherwise*/
     if(!isLoopFinished(instruction)) {
+        machine.cpu.cx.data -= 1;
+        machine.cpu.ip.data -= instruction->length;
+    }
+}
+
+inline void Interpreter::processLoopZ(Instruction *instruction, uint8_t operandSize) {
+    if(machine.cpu.flagsRegister.df) {
+        machine.cpu.si.data -= operandSize;
+        machine.cpu.di.data -= operandSize;
+    } else {
+        machine.cpu.si.data += operandSize;
+        machine.cpu.di.data += operandSize;
+    }
+
+    /*-1 if the loop has not finished, 0 otherwise*/
+    if(!isLoopFinishedZ(instruction)) {
         machine.cpu.cx.data -= 1;
         machine.cpu.ip.data -= instruction->length;
     }
@@ -2373,7 +2402,7 @@ inline void Interpreter::interpretCmpsb(Instruction *instruction) {
     result = operand1 - operand2;
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
 
-    processLoop(instruction, 1);
+    processLoopZ(instruction, 1);
 }
 
 /*A7*/
@@ -2386,7 +2415,7 @@ inline void Interpreter::interpretCmpsw(Instruction *instruction) {
     result = operand1 - operand2;
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB16);
 
-    processLoop(instruction, 2);
+    processLoopZ(instruction, 2);
 }
 
 /*A8*/
@@ -2489,7 +2518,7 @@ inline void Interpreter::interpretScasb(Instruction* instruction) {
         machine.cpu.di.data += 1;
     }
 
-    if(!isLoopFinished(instruction)) {
+    if(!isLoopFinishedZ(instruction)) {
         machine.cpu.cx.data -= 1;
         machine.cpu.ip.data -= instruction->length;
     }
@@ -2509,7 +2538,7 @@ inline void Interpreter::interpretScasw(Instruction* instruction) {
         machine.cpu.di.data += 2;
     }
 
-    if(!isLoopFinished(instruction)) {
+    if(!isLoopFinishedZ(instruction)) {
         machine.cpu.cx.data -= 1;
         machine.cpu.ip.data -= instruction->length;
     }
@@ -3074,13 +3103,13 @@ opIDiv:
 /*F8*/
 inline void Interpreter::interpretClc() {
     machine.cpu.flagsRegister.set(machine.cpu.flagsRegister.getAf(), machine.cpu.flagsRegister.getOf(), machine.cpu.flagsRegister.result,
-                                  FlagsRegister::CMC | (machine.cpu.flagsRegister.instruction & FlagsRegister::SIZE_MASK));
+                                  FlagsRegister::CLC | (machine.cpu.flagsRegister.instruction & FlagsRegister::SIZE_MASK));
 }
 
 /*F9*/
 inline void Interpreter::interpretStc() {
     machine.cpu.flagsRegister.set(machine.cpu.flagsRegister.getAf(), machine.cpu.flagsRegister.getOf(), machine.cpu.flagsRegister.result,
-                                  FlagsRegister::CMC | (machine.cpu.flagsRegister.instruction & FlagsRegister::SIZE_MASK));
+                                  FlagsRegister::STC | (machine.cpu.flagsRegister.instruction & FlagsRegister::SIZE_MASK));
 }
 
 /*FA*/
@@ -3107,7 +3136,7 @@ inline void Interpreter::interpretStd() {
 inline void Interpreter::interpretGrp4(Instruction *instruction) {
     static void* jumpTable[] = { &&opInc, &&opDec };
 
-    decodeAddress16(instruction);
+    decodeAddress8(instruction);
     goto *jumpTable[instruction->reg];
 
 opInc:
