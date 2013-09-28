@@ -22,7 +22,10 @@ public:
 
 class Interpreter {
 private:
-    Register16* baseRegisterTable[Instruction::GS + 1];
+    Register16* baseRegisterTable_ds[Instruction::GS + 1];
+    Register16* baseRegisterTable_ss[Instruction::GS + 1];
+    /*it's a table of... base register tables. Used to decide if the default register is SS or DS*/
+    Register16** baseRegisterTableTable[0b1001 /*0x0000 is the ZERO register*/];
 
     InstructionCache cache;
 
@@ -357,7 +360,8 @@ inline void Interpreter::decodeMemoryAddress(Instruction *instruction) {
 }
 
 inline uint16_t Interpreter::decodeBaseRegisterValue(Instruction *instruction) {
-    return baseRegisterTable[instruction->prefix & Instruction::OPERAND_MASK]->data;
+    /*first get which register table to use (is the default DS or SS) and then get the actual register*/
+    return baseRegisterTableTable[instruction->base][instruction->prefix & Instruction::OPERAND_MASK]->data;
 }
 
 inline uint16_t Interpreter::decodeRelativeAddress(Instruction *instruction) {
@@ -387,7 +391,8 @@ inline void Interpreter::interpret(uint32_t address) {
         machine.cpu.decoder->decode(address, &cache.instructionCache[address]);
     }
     machine.cpu.ip.data += cache.instructionCache[address].length;
-    fprintf(out, "%x %x %x %x %x\n", machine.ram.buffer[address], machine.ram.buffer[address + 1], machine.ram.buffer[address + 2], machine.ram.buffer[address + 3], machine.cpu.bx.data);
+    fprintf(out, "%x %x %x %x %x %x\n",
+            machine.ram.buffer[address], machine.ram.buffer[address + 1], machine.ram.buffer[address + 2], machine.ram.buffer[address + 3], machine.cpu.bx.data, machine.ram.buffer[0x3e7]);
     interpret(&cache.instructionCache[address]);
 }
 

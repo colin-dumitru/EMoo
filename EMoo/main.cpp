@@ -19,6 +19,8 @@ void runTest() {
     clock_t end;
     int instructions = 0;
 
+    uint16_t x = 0xFFFF;
+
     start = clock();
 
     machine.reset();
@@ -27,6 +29,9 @@ void runTest() {
     machine.cpu.cs.data = 0xFFFF;
 
     while(instructions++ < 1000000) {
+        if(instructions == 361449) {
+            int a = 0;
+        }
         machine.step();
     }
 
