@@ -834,6 +834,7 @@ error:
     return;
 }
 
+/*00*/
 inline void Interpreter::interpretAddRmbRb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -846,6 +847,7 @@ inline void Interpreter::interpretAddRmbRb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::ADD8);
 }
 
+/*01*/
 inline void Interpreter::interpretAddRmwRw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -858,6 +860,7 @@ inline void Interpreter::interpretAddRmwRw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::ADD16);
 }
 
+/*02*/
 inline void Interpreter::interpretAddRbRmb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -870,6 +873,7 @@ inline void Interpreter::interpretAddRbRmb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADD8);
 }
 
+/*03*/
 inline void Interpreter::interpretAddRwRmw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -882,6 +886,7 @@ inline void Interpreter::interpretAddRwRmw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADD16);
 }
 
+/*04*/
 inline void Interpreter::interpretAddAlIb(Instruction *instruction) {
     operand1 = *machine.cpu.registerAddressTable[Cpu::AL];
     operand2 = instruction->immediate;
@@ -892,6 +897,7 @@ inline void Interpreter::interpretAddAlIb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADD8);
 }
 
+/*05*/
 inline void Interpreter::interpretAddAxIw(Instruction *instruction) {
     operand1 = machine.cpu.ax.data;
     operand2 = instruction->immediate;
@@ -902,14 +908,17 @@ inline void Interpreter::interpretAddAxIw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADD16);
 }
 
+/*06*/
 inline void Interpreter::interpretPushEs() {
     push(machine.cpu.es.data);
 }
 
+/*07*/
 inline void Interpreter::interpretPopEs() {
     machine.cpu.es.data = pop();
 }
 
+/*08*/
 inline void Interpreter::interpretOrRmbRb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -922,6 +931,7 @@ inline void Interpreter::interpretOrRmbRb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::LOG8);
 }
 
+/*09*/
 inline void Interpreter::interpretOrRmwRw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -934,6 +944,7 @@ inline void Interpreter::interpretOrRmwRw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::LOG16);
 }
 
+/*0A*/
 inline void Interpreter::interpretOrRbRmb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -946,6 +957,7 @@ inline void Interpreter::interpretOrRbRmb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
 }
 
+/*0B*/
 inline void Interpreter::interpretOrRwRmw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -958,6 +970,7 @@ inline void Interpreter::interpretOrRwRmw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
 }
 
+/*0C*/
 inline void Interpreter::interpretOrAlIb(Instruction *instruction) {
     operand1 = *machine.cpu.registerAddressTable[Cpu::AL];
     operand2 = instruction->immediate;
@@ -968,6 +981,7 @@ inline void Interpreter::interpretOrAlIb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
 }
 
+/*0D*/
 inline void Interpreter::interpretOrAxIw(Instruction *instruction) {
     operand1 = machine.cpu.ax.data;
     operand2 = instruction->immediate;
@@ -978,14 +992,17 @@ inline void Interpreter::interpretOrAxIw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
 }
 
+/*0E*/
 inline void Interpreter::interpretPushCs() {
     push(machine.cpu.cs.data);
 }
 
+/*0F*/
 inline void Interpreter::interpretPopCs() {
     machine.cpu.cs.data = pop();
 }
 
+/*10*/
 inline void Interpreter::interpretAdcRmbRb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -998,6 +1015,7 @@ inline void Interpreter::interpretAdcRmbRb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::ADC8);
 }
 
+/*11*/
 inline void Interpreter::interpretAdcRmwRw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -1010,6 +1028,7 @@ inline void Interpreter::interpretAdcRmwRw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand2, operand1, result, FlagsRegister::ADC16);
 }
 
+/*12*/
 inline void Interpreter::interpretAdcRbRmb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -1022,6 +1041,7 @@ inline void Interpreter::interpretAdcRbRmb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC8);
 }
 
+/*13*/
 inline void Interpreter::interpretAdcRwRmw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -1034,6 +1054,7 @@ inline void Interpreter::interpretAdcRwRmw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC16);
 }
 
+/*14*/
 inline void Interpreter::interpretAdcAlIb(Instruction *instruction) {
     operand1 = *machine.cpu.registerAddressTable[Cpu::AL];
     operand2 = instruction->immediate;
@@ -1044,6 +1065,7 @@ inline void Interpreter::interpretAdcAlIb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC8);
 }
 
+/*15*/
 inline void Interpreter::interpretAdcAxIw(Instruction *instruction) {
     operand1 = machine.cpu.ax.data;
     operand2 = instruction->immediate;
@@ -1054,14 +1076,17 @@ inline void Interpreter::interpretAdcAxIw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::ADC16);
 }
 
+/*16*/
 inline void Interpreter::interpretPushSs() {
     push(machine.cpu.ss.data);
 }
 
+/*17*/
 inline void Interpreter::interpretPopSs() {
     machine.cpu.ss.data = pop();
 }
 
+/*18*/
 inline void Interpreter::interpretSbbRmbRb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -1074,6 +1099,7 @@ inline void Interpreter::interpretSbbRmbRb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SBB8);
 }
 
+/*19*/
 inline void Interpreter::interpretSbbRmwRw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -1086,6 +1112,7 @@ inline void Interpreter::interpretSbbRmwRw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SBB16);
 }
 
+/*1A*/
 inline void Interpreter::interpretSbbRbRmb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -1098,6 +1125,7 @@ inline void Interpreter::interpretSbbRbRmb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SBB8);
 }
 
+/*1B*/
 inline void Interpreter::interpretSbbRwRmw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -1110,6 +1138,7 @@ inline void Interpreter::interpretSbbRwRmw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SBB16);
 }
 
+/*1C*/
 inline void Interpreter::interpretSbbAlIb(Instruction *instruction) {
     operand1 = *machine.cpu.registerAddressTable[Cpu::AL];
     operand2 = instruction->immediate;
@@ -1120,6 +1149,7 @@ inline void Interpreter::interpretSbbAlIb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SBB8);
 }
 
+/*1D*/
 inline void Interpreter::interpretSbbAxIw(Instruction *instruction) {
     operand1 = machine.cpu.ax.data;
     operand2 = instruction->immediate;
@@ -1130,14 +1160,17 @@ inline void Interpreter::interpretSbbAxIw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SBB16);
 }
 
+/*1E*/
 inline void Interpreter::interpretPushDs() {
     push(machine.cpu.ds.data);
 }
 
+/*1F*/
 inline void Interpreter::interpretPopDs() {
     machine.cpu.ds.data = pop();
 }
 
+/*20*/
 inline void Interpreter::interpretAndRmbRb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -1150,6 +1183,7 @@ inline void Interpreter::interpretAndRmbRb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
 }
 
+/*21*/
 inline void Interpreter::interpretAndRmwRw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -1162,6 +1196,7 @@ inline void Interpreter::interpretAndRmwRw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
 }
 
+/*22*/
 inline void Interpreter::interpretAndRbRmb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -1174,6 +1209,7 @@ inline void Interpreter::interpretAndRbRmb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
 }
 
+/*23*/
 inline void Interpreter::interpretAndRwRmw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -1186,6 +1222,7 @@ inline void Interpreter::interpretAndRwRmw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
 }
 
+/*24*/
 inline void Interpreter::interpretAndAlIb(Instruction *instruction) {
     operand1 = *machine.cpu.registerAddressTable[Cpu::AL];
     operand2 = instruction->immediate;
@@ -1196,6 +1233,7 @@ inline void Interpreter::interpretAndAlIb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
 }
 
+/*25*/
 inline void Interpreter::interpretAndAxIw(Instruction *instruction) {
     operand1 = machine.cpu.ax.data;
     operand2 = instruction->immediate;
@@ -1206,6 +1244,7 @@ inline void Interpreter::interpretAndAxIw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
 }
 
+/*27*/
 inline void Interpreter::interpretDaa() {
     static uint8_t tmpAf;
     static uint8_t tmpCf;
@@ -1227,6 +1266,7 @@ inline void Interpreter::interpretDaa() {
     machine.cpu.flagsRegister.set(tmpCf, tmpAf, LOW(machine.cpu.ax.data), FlagsRegister::DAA8);
 }
 
+/*28*/
 inline void Interpreter::interpretSubRmbRb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -1239,6 +1279,7 @@ inline void Interpreter::interpretSubRmbRb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
 }
 
+/*29*/
 inline void Interpreter::interpretSubRmwRw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -1251,6 +1292,7 @@ inline void Interpreter::interpretSubRmwRw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB16);
 }
 
+/*2A*/
 inline void Interpreter::interpretSubRbRmb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -1263,6 +1305,7 @@ inline void Interpreter::interpretSubRbRmb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
 }
 
+/*2B*/
 inline void Interpreter::interpretSubRwRmw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -1275,6 +1318,7 @@ inline void Interpreter::interpretSubRwRmw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB16);
 }
 
+/*2C*/
 inline void Interpreter::interpretSubAlIb(Instruction *instruction) {
     operand1 = *machine.cpu.registerAddressTable[Cpu::AL];
     operand2 = instruction->immediate;
@@ -1285,6 +1329,7 @@ inline void Interpreter::interpretSubAlIb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
 }
 
+/*2D*/
 inline void Interpreter::interpretSubAxIw(Instruction *instruction) {
     operand1 = machine.cpu.ax.data;
     operand2 = instruction->immediate;
@@ -1295,6 +1340,7 @@ inline void Interpreter::interpretSubAxIw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB16);
 }
 
+/*2F*/
 inline void Interpreter::interpretDas() {
     static uint8_t tmpAf;
     static uint8_t tmpCf;
@@ -1316,6 +1362,7 @@ inline void Interpreter::interpretDas() {
     machine.cpu.flagsRegister.set(tmpCf, tmpAf, LOW(machine.cpu.ax.data), FlagsRegister::DAA8);
 }
 
+/*30*/
 inline void Interpreter::interpretXorRmbRb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -1328,6 +1375,7 @@ inline void Interpreter::interpretXorRmbRb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
 }
 
+/*31*/
 inline void Interpreter::interpretXorRmwRw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -1340,6 +1388,7 @@ inline void Interpreter::interpretXorRmwRw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
 }
 
+/*32*/
 inline void Interpreter::interpretXorRbRmb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -1352,6 +1401,7 @@ inline void Interpreter::interpretXorRbRmb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
 }
 
+/*33*/
 inline void Interpreter::interpretXorRwRmw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -1364,6 +1414,7 @@ inline void Interpreter::interpretXorRwRmw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
 }
 
+/*34*/
 inline void Interpreter::interpretXorAlIb(Instruction *instruction) {
     operand1 = *machine.cpu.registerAddressTable[Cpu::AL];
     operand2 = instruction->immediate;
@@ -1374,6 +1425,7 @@ inline void Interpreter::interpretXorAlIb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
 }
 
+/*35*/
 inline void Interpreter::interpretXorAxIw(Instruction *instruction) {
     operand1 = machine.cpu.ax.data;
     operand2 = instruction->immediate;
@@ -1384,6 +1436,7 @@ inline void Interpreter::interpretXorAxIw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
 }
 
+/*37*/
 inline void Interpreter::interpretAaa() {
     static uint8_t tmpAf;
     static uint8_t tmpCf;
@@ -1404,6 +1457,7 @@ inline void Interpreter::interpretAaa() {
     machine.cpu.flagsRegister.set(tmpCf, tmpAf, LOW(machine.cpu.ax.data), FlagsRegister::DAA8);
 }
 
+/*38*/
 inline void Interpreter::interpretCmpRmbRb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -1415,6 +1469,7 @@ inline void Interpreter::interpretCmpRmbRb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
 }
 
+/*39*/
 inline void Interpreter::interpretCmpRmwRw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -1426,6 +1481,7 @@ inline void Interpreter::interpretCmpRmwRw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB16);
 }
 
+/*3A*/
 inline void Interpreter::interpretCmpRbRmb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -1437,6 +1493,7 @@ inline void Interpreter::interpretCmpRbRmb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
 }
 
+/*3B*/
 inline void Interpreter::interpretCmpRwRmw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -1448,6 +1505,7 @@ inline void Interpreter::interpretCmpRwRmw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB16);
 }
 
+/*3C*/
 inline void Interpreter::interpretCmpAlIb(Instruction *instruction) {
     operand1 = *machine.cpu.registerAddressTable[Cpu::AL];
     operand2 = instruction->immediate;
@@ -1457,6 +1515,7 @@ inline void Interpreter::interpretCmpAlIb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
 }
 
+/*3D*/
 inline void Interpreter::interpretCmpAxIw(Instruction *instruction) {
     operand1 = machine.cpu.ax.data;
     operand2 = instruction->immediate;
@@ -1466,6 +1525,7 @@ inline void Interpreter::interpretCmpAxIw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB16);
 }
 
+/*3F*/
 inline void Interpreter::interpretAas() {
     static uint8_t tmpAf;
     static uint8_t tmpCf;
@@ -1486,6 +1546,7 @@ inline void Interpreter::interpretAas() {
     machine.cpu.flagsRegister.set(tmpCf, tmpAf, LOW(machine.cpu.ax.data), FlagsRegister::DAA8);
 }
 
+/*40*/
 inline void Interpreter::interpretIncEax() {
     operand1 = machine.cpu.ax.data;
     machine.cpu.ax.data = operand1 + 1;
@@ -1493,6 +1554,7 @@ inline void Interpreter::interpretIncEax() {
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.ax.data, FlagsRegister::INC16);
 }
 
+/*41*/
 inline void Interpreter::interpretIncEcx() {
     operand1 = machine.cpu.cx.data;
     machine.cpu.cx.data = operand1 + 1;
@@ -1500,6 +1562,7 @@ inline void Interpreter::interpretIncEcx() {
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.cx.data, FlagsRegister::INC16);
 }
 
+/*42*/
 inline void Interpreter::interpretIncEdx() {
     operand1 = machine.cpu.dx.data;
     machine.cpu.dx.data = operand1 + 1;
@@ -1507,6 +1570,7 @@ inline void Interpreter::interpretIncEdx() {
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.dx.data, FlagsRegister::INC16);
 }
 
+/*43*/
 inline void Interpreter::interpretIncEbx() {
     operand1 = machine.cpu.bx.data;
     machine.cpu.bx.data = operand1 + 1;
@@ -1514,6 +1578,7 @@ inline void Interpreter::interpretIncEbx() {
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.bx.data, FlagsRegister::INC16);
 }
 
+/*44*/
 inline void Interpreter::interpretIncEsp() {
     operand1 = machine.cpu.sp.data;
     machine.cpu.sp.data = operand1 + 1;
@@ -1521,6 +1586,7 @@ inline void Interpreter::interpretIncEsp() {
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.sp.data, FlagsRegister::INC16);
 }
 
+/*45*/
 inline void Interpreter::interpretIncEbp() {
     operand1 = machine.cpu.bp.data;
     machine.cpu.bp.data = operand1 + 1;
@@ -1528,6 +1594,7 @@ inline void Interpreter::interpretIncEbp() {
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.bp.data, FlagsRegister::INC16);
 }
 
+/*46*/
 inline void Interpreter::interpretIncEsi() {
     operand1 = machine.cpu.si.data;
     machine.cpu.si.data = operand1 + 1;
@@ -1535,6 +1602,7 @@ inline void Interpreter::interpretIncEsi() {
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.si.data, FlagsRegister::INC16);
 }
 
+/*47*/
 inline void Interpreter::interpretIncEdi() {
     operand1 = machine.cpu.di.data;
     machine.cpu.di.data = operand1 + 1;
@@ -1542,6 +1610,7 @@ inline void Interpreter::interpretIncEdi() {
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.di.data, FlagsRegister::INC16);
 }
 
+/*48*/
 inline void Interpreter::interpretDecEax() {
     operand1 = machine.cpu.ax.data;
     machine.cpu.ax.data = operand1 - 1;
@@ -1549,6 +1618,7 @@ inline void Interpreter::interpretDecEax() {
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.ax.data, FlagsRegister::DEC16);
 }
 
+/*49*/
 inline void Interpreter::interpretDecEcx() {
     operand1 = machine.cpu.cx.data;
     machine.cpu.cx.data = operand1 - 1;
@@ -1556,6 +1626,7 @@ inline void Interpreter::interpretDecEcx() {
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.cx.data, FlagsRegister::DEC16);
 }
 
+/*4A*/
 inline void Interpreter::interpretDecEdx() {
     operand1 = machine.cpu.dx.data;
     machine.cpu.dx.data = operand1 - 1;
@@ -1563,6 +1634,7 @@ inline void Interpreter::interpretDecEdx() {
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.dx.data, FlagsRegister::DEC16);
 }
 
+/*4B*/
 inline void Interpreter::interpretDecEbx() {
     operand1 = machine.cpu.bx.data;
     machine.cpu.bx.data = operand1 - 1;
@@ -1570,6 +1642,7 @@ inline void Interpreter::interpretDecEbx() {
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.bx.data, FlagsRegister::DEC16);
 }
 
+/*4C*/
 inline void Interpreter::interpretDecEsp() {
     operand1 = machine.cpu.sp.data;
     machine.cpu.sp.data = operand1 - 1;
@@ -1577,6 +1650,7 @@ inline void Interpreter::interpretDecEsp() {
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.sp.data, FlagsRegister::DEC16);
 }
 
+/*4D*/
 inline void Interpreter::interpretDecEbp() {
     operand1 = machine.cpu.bp.data;
     machine.cpu.bp.data = operand1 - 1;
@@ -1584,6 +1658,7 @@ inline void Interpreter::interpretDecEbp() {
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.bp.data, FlagsRegister::DEC16);
 }
 
+/*4E*/
 inline void Interpreter::interpretDecEsi() {
     operand1 = machine.cpu.si.data;
     machine.cpu.si.data = operand1 - 1;
@@ -1591,6 +1666,7 @@ inline void Interpreter::interpretDecEsi() {
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.si.data, FlagsRegister::DEC16);
 }
 
+/*4F*/
 inline void Interpreter::interpretDecEdi() {
     operand1 = machine.cpu.di.data;
     machine.cpu.di.data = operand1 - 1;
@@ -1598,70 +1674,87 @@ inline void Interpreter::interpretDecEdi() {
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), machine.cpu.di.data, FlagsRegister::DEC16);
 }
 
+/*50*/
 inline void Interpreter::interpretPushEax() {
     push(machine.cpu.ax.data);
 }
 
+/*51*/
 inline void Interpreter::interpretPushEcx() {
     push(machine.cpu.cx.data);
 }
 
+/*52*/
 inline void Interpreter::interpretPushEdx() {
     push(machine.cpu.dx.data);
 }
 
+/*53*/
 inline void Interpreter::interpretPushEbx() {
     push(machine.cpu.bx.data);
 }
 
+/*54*/
 inline void Interpreter::interpretPushEsp() {
     push(machine.cpu.sp.data);
 }
 
+/*55*/
 inline void Interpreter::interpretPushEbp() {
     push(machine.cpu.bp.data);
 }
 
+/*56*/
 inline void Interpreter::interpretPushEsi() {
     push(machine.cpu.si.data);
 }
 
+/*57*/
 inline void Interpreter::interpretPushEdi() {
     push(machine.cpu.di.data);
 }
 
+/*58*/
 inline void Interpreter::interpretPopEax() {
     machine.cpu.ax.data = pop();
 }
 
+/*59*/
 inline void Interpreter::interpretPopEcx() {
     machine.cpu.cx.data = pop();
 }
 
+/*5A*/
 inline void Interpreter::interpretPopEdx() {
     machine.cpu.dx.data = pop();
 }
 
+/*5B*/
 inline void Interpreter::interpretPopEbx() {
     machine.cpu.bx.data = pop();
 }
 
+/*5C*/
 inline void Interpreter::interpretPopEsp() {
     machine.cpu.sp.data = pop();
 }
 
+/*5D*/
 inline void Interpreter::interpretPopEbp() {
     machine.cpu.bp.data = pop();
 }
 
+/*5E*/
 inline void Interpreter::interpretPopEsi() {
     machine.cpu.si.data = pop();
 }
 
+/*5F*/
 inline void Interpreter::interpretPopEdi() {
     machine.cpu.di.data = pop();
 }
 
+/*60*/
 inline void Interpreter::interpretPusha() {
     static uint16_t tempSp;
 
@@ -1677,6 +1770,7 @@ inline void Interpreter::interpretPusha() {
     push(machine.cpu.di.data);
 }
 
+/*61*/
 inline void Interpreter::interpretPopa() {
     machine.cpu.di.data = pop();
     machine.cpu.si.data = pop();
@@ -1688,6 +1782,7 @@ inline void Interpreter::interpretPopa() {
     machine.cpu.ax.data = pop();
 }
 
+/*62*/
 inline void Interpreter::interpretBound(Instruction *instruction) {
     static uint16_t index, lowerBound, upperBound;
 
@@ -1702,6 +1797,7 @@ inline void Interpreter::interpretBound(Instruction *instruction) {
     }
 }
 
+/*68*/
 inline void Interpreter::interpretImulIw(Instruction *instruction) {
     static int32_t tempResult;
 
@@ -1717,10 +1813,12 @@ inline void Interpreter::interpretImulIw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(tempResult >> 16, FlagsRegister::IMUL16);
 }
 
+/*69*/
 inline void Interpreter::interpretPushIw(Instruction *instruction) {
     push(instruction->immediate);
 }
 
+/*6A*/
 inline void Interpreter::interpretImulIb(Instruction *instruction) {
     static int32_t tempResult;
 
@@ -1736,129 +1834,152 @@ inline void Interpreter::interpretImulIb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(tempResult >> 16, FlagsRegister::IMUL8);
 }
 
+/*6B*/
 inline void Interpreter::interpretPushIb(Instruction *instruction) {
     push(instruction->immediate);
 }
 
+/*6C*/
 inline void Interpreter::interpretInsb(Instruction* instruction) {
     LOW(machine.cpu.ax.data) = machine.portHandler.in8(machine.cpu.dx.data);
 
     processLoop(instruction, 1);
 }
 
+/*6D*/
 inline void Interpreter::interpretInsw(Instruction* instruction) {
     machine.cpu.ax.data = machine.portHandler.in16(machine.cpu.dx.data);
 
     processLoop(instruction, 2);
 }
 
+/*6E*/
 inline void Interpreter::interpretOutsb(Instruction* instruction) {
     machine.portHandler.out8(machine.cpu.dx.data, LOW(machine.cpu.ax.data));
 
     processLoop(instruction, 1);
 }
 
+/*6F*/
 inline void Interpreter::interpretOutsw(Instruction* instruction) {
     machine.portHandler.out16(machine.cpu.dx.data, machine.cpu.ax.data);
 
     processLoop(instruction, 2);
 }
 
+/*70*/
 inline void Interpreter::interpretJo(Instruction *instruction) {
     if(machine.cpu.flagsRegister.getOf()) {
         machine.cpu.ip.data += (int8_t)instruction->immediate;
     }
 }
 
+/*71*/
 inline void Interpreter::interpretJno(Instruction *instruction) {
     if(!machine.cpu.flagsRegister.getOf()) {
         machine.cpu.ip.data += (int8_t)instruction->immediate;
     }
 }
 
+/*72*/
 inline void Interpreter::interpretJb(Instruction *instruction) {
     if(machine.cpu.flagsRegister.getCf()) {
         machine.cpu.ip.data += (int8_t)instruction->immediate;
     }
 }
+
+/*73*/
 inline void Interpreter::interpretJnb(Instruction *instruction) {
     if(!machine.cpu.flagsRegister.getCf()) {
         machine.cpu.ip.data += (int8_t)instruction->immediate;
     }
 }
 
+/*74*/
 inline void Interpreter::interpretJz(Instruction *instruction) {
     if(machine.cpu.flagsRegister.getZf()) {
         machine.cpu.ip.data += (int8_t)instruction->immediate;
     }
 }
 
+/*75*/
 inline void Interpreter::interpretJnz(Instruction *instruction) {
     if(!machine.cpu.flagsRegister.getZf()) {
         machine.cpu.ip.data += (int8_t)instruction->immediate;
     }
 }
 
+/*76*/
 inline void Interpreter::interpretJbe(Instruction *instruction) {
     if(machine.cpu.flagsRegister.getCf() || machine.cpu.flagsRegister.getZf()) {
         machine.cpu.ip.data += (int8_t)instruction->immediate;
     }
 }
 
+/*77*/
 inline void Interpreter::interpretJa(Instruction *instruction) {
     if(!machine.cpu.flagsRegister.getCf() && !machine.cpu.flagsRegister.getZf()) {
         machine.cpu.ip.data += (int8_t)instruction->immediate;
     }
 }
 
+/*78*/
 inline void Interpreter::interpretJs(Instruction *instruction) {
     if(machine.cpu.flagsRegister.getSf()) {
         machine.cpu.ip.data += (int8_t)instruction->immediate;
     }
 }
 
+/*79*/
 inline void Interpreter::interpretJns(Instruction *instruction) {
     if(!machine.cpu.flagsRegister.getSf()) {
         machine.cpu.ip.data += (int8_t)instruction->immediate;
     }
 }
 
+/*7A*/
 inline void Interpreter::interpretJpe(Instruction *instruction) {
     if(machine.cpu.flagsRegister.getPf()) {
         machine.cpu.ip.data += (int8_t)instruction->immediate;
     }
 }
 
+/*7B*/
 inline void Interpreter::interpretJpo(Instruction *instruction) {
     if(!machine.cpu.flagsRegister.getPf()) {
         machine.cpu.ip.data += (int8_t)instruction->immediate;
     }
 }
 
+/*7C*/
 inline void Interpreter::interpretJl(Instruction *instruction) {
     if(machine.cpu.flagsRegister.getSf() != machine.cpu.flagsRegister.getOf()) {
         machine.cpu.ip.data += (int8_t)instruction->immediate;
     }
 }
 
+/*7D*/
 inline void Interpreter::interpretJge(Instruction *instruction) {
     if(machine.cpu.flagsRegister.getSf() == machine.cpu.flagsRegister.getOf()) {
         machine.cpu.ip.data += (int8_t)instruction->immediate;
     }
 }
 
+/*7E*/
 inline void Interpreter::interpretJle(Instruction *instruction) {
     if((machine.cpu.flagsRegister.getSf() != machine.cpu.flagsRegister.getOf()) || machine.cpu.flagsRegister.getZf()) {
         machine.cpu.ip.data += (int8_t)instruction->immediate;
     }
 }
 
+/*7F*/
 inline void Interpreter::interpretJg(Instruction *instruction) {
     if(!machine.cpu.flagsRegister.getZf() && (machine.cpu.flagsRegister.getOf() == machine.cpu.flagsRegister.getSf())) {
         machine.cpu.ip.data += (int8_t)instruction->immediate;
     }
 }
 
+/*80*/ /*82*/
 inline void Interpreter::interpretGrpRmbIb(Instruction *instruction) {
     static const void* jumpTable[] = {
         &&opAdd, &&opOr, &&opAdc, &&opSbb, &&opAnd8, &&opSub8, &&opXor8, &&opFlagSub
@@ -1904,6 +2025,7 @@ opFlagSub:
     return machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
 }
 
+/*81*/
 inline void Interpreter::interpretGrpRmwIw(Instruction *instruction) {
     static const void* jumpTable[] = {
         &&opAdd, &&opOr, &&opAdc, &&opSbb, &&opAnd8, &&opSub8, &&opXor8, &&opFlagSub
@@ -1949,7 +2071,7 @@ opFlagSub:
     return machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
 }
 
-
+/*83*/
 inline void Interpreter::interpretGrpRmwIb(Instruction *instruction) {
     static const void* jumpTable[] = {
         &&opAdd, &&opOr, &&opAdc, &&opSbb, &&opAnd8, &&opSub8, &&opXor8, &&opFlagSub
@@ -1995,6 +2117,7 @@ opFlagSub:
     return machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
 }
 
+/*84*/
 inline void Interpreter::interpretTestRmbRb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -2006,6 +2129,7 @@ inline void Interpreter::interpretTestRmbRb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
 }
 
+/*85*/
 inline void Interpreter::interpretTestRmwRw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -2017,6 +2141,7 @@ inline void Interpreter::interpretTestRmwRw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
 }
 
+/*86*/
 inline void Interpreter::interpretXchgRmbRb(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -2025,6 +2150,7 @@ inline void Interpreter::interpretXchgRmbRb(Instruction *instruction) {
     *machine.cpu.registerAddressTable[instruction->reg] = operand1;
 }
 
+/*87*/
 inline void Interpreter::interpretXchgRmwRw(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -2033,104 +2159,122 @@ inline void Interpreter::interpretXchgRmwRw(Instruction *instruction) {
     machine.cpu.registerTable[instruction->reg]->data = operand1;
 }
 
+/*88*/
 inline void Interpreter::interpretMovRmbRb(Instruction *instruction) {
     decodeAddress8(instruction);
 
     *rmAddress = *machine.cpu.registerAddressTable[instruction->reg];
 }
 
+/*89*/
 inline void Interpreter::interpretMovRmwRw(Instruction *instruction) {
     decodeAddress16(instruction);
 
     *WORD(rmAddress) = machine.cpu.registerTable[instruction->reg]->data;
 }
 
+/*8A*/
 inline void Interpreter::interpretMovRbRmb(Instruction *instruction) {
     decodeAddress8(instruction);
 
     *machine.cpu.registerAddressTable[instruction->reg] = *rmAddress;
 }
 
+/*8B*/
 inline void Interpreter::interpretMovRwRmw(Instruction *instruction) {
     decodeAddress16(instruction);
 
     machine.cpu.registerTable[instruction->reg]->data = *WORD(rmAddress);
 }
 
+/*8C*/
 inline void Interpreter::interpretMovRmwSr(Instruction *instruction) {
     decodeAddress16(instruction);
 
     *WORD(rmAddress) = machine.cpu.segmentRegisterTable[instruction->reg]->data;
 }
 
+/*8D*/
 inline void Interpreter::interpretLea(Instruction *instruction) {
     decodeAddress16(instruction);
 
     machine.cpu.registerTable[instruction->reg]->data = decodeRelativeAddress(instruction);
 }
 
+/*8E*/
 inline void Interpreter::interpretMovSrRmw(Instruction *instruction) {
     decodeAddress16(instruction);
 
     machine.cpu.segmentRegisterTable[instruction->reg]->data = *WORD(rmAddress);
 }
 
+/*8F*/
 inline void Interpreter::interpretPopRmw(Instruction *instruction) {
     decodeAddress16(instruction);
 
     *WORD(rmAddress) = pop();
 }
 
+/*91*/
 inline void Interpreter::interpretXchgEcxEax(){
     operand1 = machine.cpu.ax.data;
     machine.cpu.ax.data = machine.cpu.cx.data;
     machine.cpu.cx.data = operand1;
 }
 
+/*92*/
 inline void Interpreter::interpretXchgEdxEax(){
     operand1 = machine.cpu.ax.data;
     machine.cpu.ax.data = machine.cpu.dx.data;
     machine.cpu.dx.data = operand1;
 }
 
+/*93*/
 inline void Interpreter::interpretXchgEbxEax(){
     operand1 = machine.cpu.ax.data;
     machine.cpu.ax.data = machine.cpu.bx.data;
     machine.cpu.bx.data = operand1;
 }
 
+/*94*/
 inline void Interpreter::interpretXchgEspEax(){
     operand1 = machine.cpu.ax.data;
     machine.cpu.ax.data = machine.cpu.sp.data;
     machine.cpu.sp.data = operand1;
 }
 
+/*95*/
 inline void Interpreter::interpretXchgEbpEax(){
     operand1 = machine.cpu.ax.data;
     machine.cpu.ax.data = machine.cpu.bp.data;
     machine.cpu.bp.data = operand1;
 }
 
+/*96*/
 inline void Interpreter::interpretXchgEsiEax(){
     operand1 = machine.cpu.ax.data;
     machine.cpu.ax.data = machine.cpu.si.data;
     machine.cpu.si.data = operand1;
 }
 
+/*97*/
 inline void Interpreter::interpretXchgEdiEax(){
     operand1 = machine.cpu.ax.data;
     machine.cpu.ax.data = machine.cpu.di.data;
     machine.cpu.di.data = operand1;
 }
 
+/*98*/
 inline void Interpreter::interpretCbw(){
     *machine.cpu.registerAddressTable[machine.cpu.AH] = 0 - ((*machine.cpu.registerAddressTable[machine.cpu.AL]) >> 7);
 }
 
+/*99*/
 inline void Interpreter::interpretCwd(){
     machine.cpu.dx.data = 0 - ((*machine.cpu.registerAddressTable[machine.cpu.AH]) >> 7);
 }
 
+/*9A*/
 inline void Interpreter::interpretCall(Instruction *instruction){
     push(machine.cpu.cs.data);
     push(machine.cpu.ip.data);
@@ -2140,47 +2284,56 @@ inline void Interpreter::interpretCall(Instruction *instruction){
     machine.cpu.cs.data = instruction->displacement;
 }
 
+/*9B*/
 inline void Interpreter::interpretWait(){
     //señor nada
 }
 
+/*9C*/
 inline void Interpreter::interpretPushF(){
     push(machine.cpu.flagsRegister.toWord());
 }
 
+/*9D*/
 inline void Interpreter::interpretPopF(){
     machine.cpu.flagsRegister.fromWord(pop());
 }
 
+/*9E*/
 inline void Interpreter::interpretSahF(){
     machine.cpu.flagsRegister.fromByte(*machine.cpu.registerAddressTable[machine.cpu.AH]);
 }
 
+/*9F*/
 inline void Interpreter::interpretLahF(){
     *machine.cpu.registerAddressTable[machine.cpu.AH] = machine.cpu.flagsRegister.toByte();
 }
 
+/*A0*/
 inline void Interpreter::interpretMovAlRmb(Instruction *instruction) {
     operand1 = (decodeBaseRegisterValue(instruction) << 4) + instruction->immediate;
     LOW(machine.cpu.ax.data) = machine.ram.buffer[operand1];
 }
 
+/*A1*/
 inline void Interpreter::interpretMovAxRmw(Instruction *instruction) {
     operand1 = (decodeBaseRegisterValue(instruction) << 4) + instruction->immediate;
     machine.cpu.ax.data = *WORD(&machine.ram.buffer[operand1]);
 }
 
-
+/*A2*/
 inline void Interpreter::interpretMovRmbAl(Instruction *instruction) {
     operand1 = (decodeBaseRegisterValue(instruction) << 4) + instruction->immediate;
     machine.ram.buffer[operand1] = LOW(machine.cpu.ax.data);
 }
 
+/*A3*/
 inline void Interpreter::interpretMovRmwAx(Instruction *instruction) {
     operand1 = (decodeBaseRegisterValue(instruction) << 4) + instruction->immediate;
     *WORD(&machine.ram.buffer[operand1]) = machine.cpu.ax.data;
 }
 
+/*A4*/
 inline void Interpreter::interpretMovsb(Instruction *instruction) {
     /*source address*/
     operand1 = (decodeBaseRegisterValue(instruction) << 4) + machine.cpu.si.data;
@@ -2192,7 +2345,7 @@ inline void Interpreter::interpretMovsb(Instruction *instruction) {
     processLoop(instruction, 1);
 }
 
-
+/*A5*/
 inline void Interpreter::interpretMovsw(Instruction *instruction) {
     /*source address*/
     operand1 = (decodeBaseRegisterValue(instruction) << 4) + machine.cpu.si.data;
@@ -2205,7 +2358,7 @@ inline void Interpreter::interpretMovsw(Instruction *instruction) {
     processLoop(instruction, 2);
 }
 
-
+/*A6*/
 inline void Interpreter::interpretCmpsb(Instruction *instruction) {
     /*source value*/
     operand1 = machine.ram.buffer[(decodeBaseRegisterValue(instruction) << 4) + machine.cpu.si.data];
@@ -2218,7 +2371,7 @@ inline void Interpreter::interpretCmpsb(Instruction *instruction) {
     processLoop(instruction, 1);
 }
 
-
+/*A7*/
 inline void Interpreter::interpretCmpsw(Instruction *instruction) {
     /*source value*/
     operand1 = *WORD(&machine.ram.buffer[(decodeBaseRegisterValue(instruction) << 4) + machine.cpu.si.data]);
@@ -2231,6 +2384,7 @@ inline void Interpreter::interpretCmpsw(Instruction *instruction) {
     processLoop(instruction, 2);
 }
 
+/*A8*/
 inline void Interpreter::interpretTestAlIb(Instruction *instruction) {
     operand1 = LOW(machine.cpu.ax.data);
     operand2 = instruction->immediate;
@@ -2239,6 +2393,7 @@ inline void Interpreter::interpretTestAlIb(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG8);
 }
 
+/*A9*/
 inline void Interpreter::interpretTestAxIw(Instruction *instruction) {
     operand1 = machine.cpu.ax.data;
     operand2 = instruction->immediate;
@@ -2247,6 +2402,7 @@ inline void Interpreter::interpretTestAxIw(Instruction *instruction) {
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::LOG16);
 }
 
+/*AA*/
 inline void Interpreter::interpretStosb(Instruction* instruction) {
     machine.ram.buffer[(machine.cpu.es.data << 4) + machine.cpu.di.data]
             = LOW(machine.cpu.ax.data);
@@ -2263,6 +2419,7 @@ inline void Interpreter::interpretStosb(Instruction* instruction) {
     }
 }
 
+/*AB*/
 inline void Interpreter::interpretStosw(Instruction* instruction) {
     *WORD(&machine.ram.buffer[(machine.cpu.es.data << 4) + machine.cpu.di.data])
             = machine.cpu.ax.data;
@@ -2279,6 +2436,7 @@ inline void Interpreter::interpretStosw(Instruction* instruction) {
     }
 }
 
+/*AC*/
 inline void Interpreter::interpretLodsb(Instruction* instruction) {
     LOW(machine.cpu.ax.data)
             = machine.ram.buffer[(decodeBaseRegisterValue(instruction) << 4) + machine.cpu.si.data];
@@ -2295,6 +2453,7 @@ inline void Interpreter::interpretLodsb(Instruction* instruction) {
     }
 }
 
+/*AD*/
 inline void Interpreter::interpretLodsw(Instruction* instruction) {
     machine.cpu.ax.data
             = *WORD(&machine.ram.buffer[(decodeBaseRegisterValue(instruction) << 4) + machine.cpu.si.data]);
@@ -2311,6 +2470,7 @@ inline void Interpreter::interpretLodsw(Instruction* instruction) {
     }
 }
 
+/*AE*/
 inline void Interpreter::interpretScasb(Instruction* instruction) {
     operand1 = LOW(machine.cpu.ax.data);
     operand2 = machine.ram.buffer[(machine.cpu.es.data << 4) + machine.cpu.di.data];
@@ -2330,6 +2490,7 @@ inline void Interpreter::interpretScasb(Instruction* instruction) {
     }
 }
 
+/*AF*/
 inline void Interpreter::interpretScasw(Instruction* instruction) {
     operand1 = machine.cpu.ax.data;
     operand2 = *WORD(&machine.ram.buffer[(machine.cpu.es.data << 4) + machine.cpu.di.data]);
@@ -2349,70 +2510,87 @@ inline void Interpreter::interpretScasw(Instruction* instruction) {
     }
 }
 
+/*B0*/
 inline void Interpreter::interpretMovAlIb(Instruction* instruction){
     LOW(machine.cpu.ax.data) = instruction->immediate;
 }
 
+/*B1*/
 inline void Interpreter::interpretMovClIb(Instruction* instruction){
     LOW(machine.cpu.cx.data) = instruction->immediate;
 }
 
+/*B2*/
 inline void Interpreter::interpretMovDlIb(Instruction* instruction){
     LOW(machine.cpu.dx.data) = instruction->immediate;
 }
 
+/*B3*/
 inline void Interpreter::interpretMovBlIb(Instruction* instruction){
     LOW(machine.cpu.bx.data) = instruction->immediate;
 }
 
+/*B4*/
 inline void Interpreter::interpretMovAhIb(Instruction* instruction){
     HIGH(machine.cpu.ax.data) = instruction->immediate;
 }
 
+/*B5*/
 inline void Interpreter::interpretMovChIb(Instruction* instruction){
     HIGH(machine.cpu.cx.data) = instruction->immediate;
 }
 
+/*B6*/
 inline void Interpreter::interpretMovDhIb(Instruction* instruction){
     HIGH(machine.cpu.dx.data) = instruction->immediate;
 }
 
+/*B7*/
 inline void Interpreter::interpretMovBhIb(Instruction* instruction){
     HIGH(machine.cpu.bx.data) = instruction->immediate;
 }
 
+/*B8*/
 inline void Interpreter::interpretMovEaxIw(Instruction* instruction){
     machine.cpu.ax.data = instruction->immediate;
 }
 
+/*B9*/
 inline void Interpreter::interpretMovEcxIw(Instruction* instruction){
     machine.cpu.cx.data = instruction->immediate;
 }
 
+/*BA*/
 inline void Interpreter::interpretMovEdxIw(Instruction* instruction){
     machine.cpu.dx.data = instruction->immediate;
 }
 
+/*BB*/
 inline void Interpreter::interpretMovEbxIw(Instruction* instruction){
     machine.cpu.bx.data = instruction->immediate;
 }
 
+/*BC*/
 inline void Interpreter::interpretMovEspIw(Instruction* instruction){
     machine.cpu.sp.data = instruction->immediate;
 }
 
+/*BD*/
 inline void Interpreter::interpretMovEbpIw(Instruction* instruction){
     machine.cpu.bp.data = instruction->immediate;
 }
 
+/*BE*/
 inline void Interpreter::interpretMovEsiIw(Instruction* instruction){
     machine.cpu.si.data = instruction->immediate;
 }
 
+/*BF*/
 inline void Interpreter::interpretMovEdiIw(Instruction* instruction){
     machine.cpu.di.data = instruction->immediate;
 }
 
+/*C0*/
 inline void Interpreter::interpretGrpRmbIb2(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -2429,6 +2607,7 @@ inline void Interpreter::interpretGrpRmbIb2(Instruction *instruction) {
     interpretBitGrp8(instruction);
 }
 
+/*C1*/
 inline void Interpreter::interpretGrpRmwIb2(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -2445,37 +2624,44 @@ inline void Interpreter::interpretGrpRmwIb2(Instruction *instruction) {
     interpretBitGrp16(instruction);
 }
 
+/*C2*/
 inline void Interpreter::interpretRetIw(Instruction *instruction) {
     machine.cpu.ip.data = pop();
     machine.cpu.sp.data += instruction->immediate;
 }
 
+/*C3*/
 inline void Interpreter::interpretRet() {
     machine.cpu.ip.data = pop();
 }
 
+/*C4*/
 inline void Interpreter::interpretLes(Instruction *instruction) {
     decodeAddress16(instruction);
     machine.cpu.registerTable[instruction->reg]->data = *WORD(rmAddress);
     machine.cpu.es.data = *WORD(rmAddress + 2);
 }
 
+/*C5*/
 inline void Interpreter::interpretLds(Instruction *instruction) {
     decodeAddress16(instruction);
     machine.cpu.registerTable[instruction->reg]->data = *WORD(rmAddress);
     machine.cpu.ds.data = *WORD(rmAddress + 2);
 }
 
+/*C6*/
 inline void Interpreter::interpretMovRmbIb(Instruction* instruction){
     decodeAddress8(instruction);
     *rmAddress = instruction->immediate;
 }
 
+/*C7*/
 inline void Interpreter::interpretMovRmwIw(Instruction* instruction){
     decodeAddress16(instruction);
     *WORD(rmAddress) = instruction->immediate;
 }
 
+/*C8*/
 inline void Interpreter::interpretEnter(Instruction* instruction) {
     static uint32_t framePtr;
     static uint16_t stackSize;
@@ -2500,36 +2686,43 @@ inline void Interpreter::interpretEnter(Instruction* instruction) {
     machine.cpu.sp.data -= stackSize;
 }
 
+/*C9*/
 inline void Interpreter::interpretLeave() {
     machine.cpu.sp.data = machine.cpu.bp.data;
     machine.cpu.bp.data = pop();
 }
 
+/*CA*/
 inline void Interpreter::interpretRetfIw(Instruction* instruction) {
     machine.cpu.ip.data = pop();
     machine.cpu.cs.data = pop();
     machine.cpu.sp.data += instruction->immediate;
 }
 
+/*CB*/
 inline void Interpreter::interpretRetf() {
     machine.cpu.ip.data = pop();
     machine.cpu.cs.data = pop();
 }
 
+/*CC*/
 inline void Interpreter::interpretInt3() {
     machine.cpu.interruptHandler->call(3);
 }
 
+/*CD*/
 inline void Interpreter::interpretIntIb(Instruction* instruction) {
     machine.cpu.interruptHandler->call(instruction->immediate);
 }
 
+/*CE*/
 inline void Interpreter::interpretInto() {
     if(machine.cpu.flagsRegister.getOf()) {
         machine.cpu.interruptHandler->call(4);
     }
 }
 
+/*CF*/
 inline void Interpreter::interpretIret() {
     machine.cpu.ip.data = pop();
     machine.cpu.cs.data = pop();
@@ -2538,6 +2731,7 @@ inline void Interpreter::interpretIret() {
     interpretPopF();
 }
 
+/*D0*/
 inline void Interpreter::interpretGrpRmb1(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -2549,6 +2743,7 @@ inline void Interpreter::interpretGrpRmb1(Instruction *instruction) {
     interpretBitGrp8(instruction);
 }
 
+/*D1*/
 inline void Interpreter::interpretGrpRmw1(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -2560,6 +2755,7 @@ inline void Interpreter::interpretGrpRmw1(Instruction *instruction) {
     interpretBitGrp16(instruction);
 }
 
+/*D2*/
 inline void Interpreter::interpretGrpRmbCl(Instruction *instruction) {
     decodeAddress8(instruction);
 
@@ -2576,6 +2772,7 @@ inline void Interpreter::interpretGrpRmbCl(Instruction *instruction) {
     interpretBitGrp8(instruction);
 }
 
+/*D3*/
 inline void Interpreter::interpretGrpRmwCl(Instruction *instruction) {
     decodeAddress16(instruction);
 
@@ -2592,6 +2789,7 @@ inline void Interpreter::interpretGrpRmwCl(Instruction *instruction) {
     interpretBitGrp16(instruction);
 }
 
+/*D4*/
 inline void Interpreter::interpretAam(Instruction *instruction) {
     if (!instruction->immediate) {
         machine.cpu.interruptHandler->call(0);
@@ -2603,12 +2801,14 @@ inline void Interpreter::interpretAam(Instruction *instruction) {
     }
 }
 
+/*D5*/
 inline void Interpreter::interpretAad(Instruction *instruction) {
     machine.cpu.ax.data = (HIGH(machine.cpu.ax.data) * instruction->immediate + LOW(machine.cpu.ax.data)) & 0xFF;
     /*instruction doesn't matter as only ZF, PF, SF are set*/
     machine.cpu.flagsRegister.set(machine.cpu.ax.data, FlagsRegister::IMUL16);
 }
 
+/*D6*/
 inline void Interpreter::interpretXlat() {
     /*I found this in the Fake86 implementation, but no mention in the intel manual*/
     if(machine.cpu.flagsRegister.getCf()) {
@@ -2618,12 +2818,14 @@ inline void Interpreter::interpretXlat() {
     }
 }
 
+/*D7*/
 inline void Interpreter::interpretXlat2(Instruction *instruction) {
     LOW(machine.cpu.ax.data) = (decodeBaseRegisterValue(instruction) << 4)
             + machine.cpu.bx.data + LOW(machine.cpu.ax.data);
 
 }
 
+/*E0*/
 inline void Interpreter::interpretLoopnz(Instruction *instruction) {
     machine.cpu.cx.data -= 1;
 
@@ -2632,6 +2834,7 @@ inline void Interpreter::interpretLoopnz(Instruction *instruction) {
     }
 }
 
+/*E1*/
 inline void Interpreter::interpretLoopz(Instruction *instruction) {
     machine.cpu.cx.data -= 1;
 
@@ -2640,6 +2843,7 @@ inline void Interpreter::interpretLoopz(Instruction *instruction) {
     }
 }
 
+/*E2*/
 inline void Interpreter::interpretLoop(Instruction *instruction) {
     machine.cpu.cx.data -= 1;
 
@@ -2648,75 +2852,92 @@ inline void Interpreter::interpretLoop(Instruction *instruction) {
     }
 }
 
+/*E3*/
 inline void Interpreter::interpretJcxz(Instruction *instruction) {
     if(!machine.cpu.cx.data) {
         machine.cpu.ip.data += SIGNED8(instruction->immediate);
     }
 }
 
+/*E4*/
 inline void Interpreter::interpretInAlIb(Instruction *instruction) {
     LOW(machine.cpu.ax.data) = machine.portHandler.in8(instruction->immediate);
 }
 
+/*E5*/
 inline void Interpreter::interpretInEaxIb(Instruction *instruction) {
     machine.cpu.ax.data = machine.portHandler.in16(instruction->immediate);
 }
 
+/*E6*/
 inline void Interpreter::interpretOutIbAl(Instruction *instruction) {
     machine.portHandler.out8(instruction->immediate, LOW(machine.cpu.ax.data));
 }
 
+/*E7*/
 inline void Interpreter::interpretOutIbEax(Instruction *instruction) {
     machine.portHandler.out16(instruction->immediate, machine.cpu.ax.data);
 }
 
+/*E8*/
 inline void Interpreter::interpretCallIw(Instruction *instruction) {
     push(machine.cpu.ip.data);
     machine.cpu.ip.data += instruction->immediate;
 }
 
+/*E9*/
 inline void Interpreter::interpretJmp(Instruction *instruction) {
     machine.cpu.ip.data += instruction->immediate;
 }
 
+/*EA*/
 inline void Interpreter::interpretJmpFar(Instruction *instruction) {
     machine.cpu.ip.data = instruction->immediate;
     machine.cpu.cs.data = instruction->displacement;
 }
 
+/*EB*/
 inline void Interpreter::interpretJmpShort(Instruction *instruction) {
     machine.cpu.ip.data += SIGNED16(instruction->immediate);
 }
 
+/*EC*/
 inline void Interpreter::interpretInAlEdx() {
     LOW(machine.cpu.ax.data) = machine.portHandler.in8(machine.cpu.dx.data);
 }
 
+/*ED*/
 inline void Interpreter::interpretInEaxEdx() {
     machine.cpu.ax.data = machine.portHandler.in16(machine.cpu.dx.data);
 }
 
+/*EE*/
 inline void Interpreter::interpretOutEdxAl() {
     machine.portHandler.out8(machine.cpu.dx.data, LOW(machine.cpu.ax.data));
 }
 
+/*EF*/
 inline void Interpreter::interpretOutEdxEax() {
     machine.portHandler.out16(machine.cpu.dx.data, machine.cpu.ax.data);
 }
 
+/*F0*/
 inline void Interpreter::interpretLock() {
     //todo
 }
 
+/*F4*/
 inline void Interpreter::interpretHlt() {
     //todo
 }
 
+/*F5*/
 inline void Interpreter::interpretCmc() {
     machine.cpu.flagsRegister.set(machine.cpu.flagsRegister.getAf() | (machine.cpu.flagsRegister.getOf() << 1), !machine.cpu.flagsRegister.getCf(),
                                   machine.cpu.flagsRegister.result, FlagsRegister::CMC | (machine.cpu.flagsRegister.instruction & FlagsRegister::SIZE_MASK));
 }
 
+/*F6*/
 inline void Interpreter::interpretGrpIb3(Instruction* instruction) {
     static void* jumpTable[] {
         &&opTest, &&opTest, &&opNot, &&opNeg, &&opMul, &&opIMul, &&opDiv, &&opIDiv,
@@ -2775,6 +2996,7 @@ opIDiv:
     }
 }
 
+/*F7*/
 inline void Interpreter::interpretGrpIw3(Instruction* instruction) {
     static void* jumpTable[] {
         &&opTest, &&opTest, &&opNot, &&opNeg, &&opMul, &&opIMul, &&opDiv, &&opIDiv,
@@ -2844,32 +3066,39 @@ opIDiv:
     }
 }
 
+/*F8*/
 inline void Interpreter::interpretClc() {
     machine.cpu.flagsRegister.set(machine.cpu.flagsRegister.getAf(), machine.cpu.flagsRegister.getOf(), machine.cpu.flagsRegister.result,
                                   FlagsRegister::CMC | (machine.cpu.flagsRegister.instruction & FlagsRegister::SIZE_MASK));
 }
 
+/*F9*/
 inline void Interpreter::interpretStc() {
     machine.cpu.flagsRegister.set(machine.cpu.flagsRegister.getAf(), machine.cpu.flagsRegister.getOf(), machine.cpu.flagsRegister.result,
                                   FlagsRegister::CMC | (machine.cpu.flagsRegister.instruction & FlagsRegister::SIZE_MASK));
 }
 
+/*FA*/
 inline void Interpreter::interpretCli() {
     machine.cpu.flagsRegister.itf = false;
 }
 
+/*FB*/
 inline void Interpreter::interpretSti() {
     machine.cpu.flagsRegister.itf = true;
 }
 
+/*FC*/
 inline void Interpreter::interpretCld() {
     machine.cpu.flagsRegister.df = false;
 }
 
+/*FD*/
 inline void Interpreter::interpretStd() {
     machine.cpu.flagsRegister.df = true;
 }
 
+/*FE*/
 inline void Interpreter::interpretGrp4(Instruction *instruction) {
     static void* jumpTable[] = { &&opInc, &&opDec };
 
@@ -2889,6 +3118,7 @@ opDec:
     machine.cpu.flagsRegister.set(operand1, machine.cpu.flagsRegister.getCf(), *rmAddress, FlagsRegister::DEC8);
 }
 
+/*FF*/
 inline void Interpreter::interpretGrp5(Instruction *instruction) {
     static void* jumpTable[] = {
         &&opInc, &&opDec, &&opCall, &&opCallFar, &&opJmp, &&opJmpFar, &&opPush
