@@ -6,6 +6,16 @@ Machine::Machine()
 }
 
 void Machine::reset() {    
+    machine.portHandler.registerReader(0x60, Keyboard::read60);
+    machine.portHandler.registerReader(0x61, Keyboard::read61);
+    machine.portHandler.registerReader(0x62, Keyboard::read62);
+    machine.portHandler.registerReader(0x63, Keyboard::read63);
+
+    machine.portHandler.registerWriter(0x60, Keyboard::write60);
+    machine.portHandler.registerWriter(0x61, Keyboard::write61);
+    machine.portHandler.registerWriter(0x62, Keyboard::write62);
+    machine.portHandler.registerWriter(0x63, Keyboard::write63);
+
     cpu.ip.data = 0x0000;
     cpu.cs.data = 0x0000;
     cpu.interpreter->reset();

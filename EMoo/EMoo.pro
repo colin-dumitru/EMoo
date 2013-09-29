@@ -34,7 +34,8 @@ SOURCES += main.cpp \
     cpu/decoder.cpp \
     cpu/instruction.cpp \
     cpu/interrupthandler.cpp \
-    io/porthandler.cpp
+    io/porthandler.cpp \
+    io/keyboard.cpp
 
 HEADERS += \
     cpu/cpu.h \
@@ -47,4 +48,5 @@ HEADERS += \
     cpu/decoder.h \
     cpu/instruction.h \
     cpu/interrupthandler.h \
-    io/porthandler.h
+    io/porthandler.h \
+    io/keyboard.h

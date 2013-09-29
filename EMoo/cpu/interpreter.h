@@ -864,7 +864,7 @@ opGrp4: return interpretGrp4(instruction);
 opGrp5: return interpretGrp5(instruction);
 
 error:
-    ERR("invalid opcode used: %d", instruction->opcode);
+    ERR("invalid opcode used: %x", instruction->opcode);
     return;
 }
 

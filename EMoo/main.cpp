@@ -19,7 +19,9 @@ void runTest() {
     clock_t end;
     int instructions = 0;
 
-    uint16_t x = 0xFFFF;
+    uint8_t x = 0xFF;
+
+    printf("%x\n", x << 4);
 
     start = clock();
 
@@ -29,7 +31,7 @@ void runTest() {
     machine.cpu.cs.data = 0xFFFF;
 
     while(instructions++ < 1000000) {
-        if(instructions == 372131) {
+        if(instructions == 361166) {
             int a = 0;
         }
         machine.step();
