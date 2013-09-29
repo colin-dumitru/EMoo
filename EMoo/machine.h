@@ -5,6 +5,7 @@
 #include "cpu/cpu.h"
 #include "io/porthandler.h"
 #include "io/keyboard.h"
+#include "io/ppi.h"
 #include <string.h>
 
 class Machine

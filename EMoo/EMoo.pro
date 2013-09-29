@@ -35,7 +35,8 @@ SOURCES += main.cpp \
     cpu/instruction.cpp \
     cpu/interrupthandler.cpp \
     io/porthandler.cpp \
-    io/keyboard.cpp
+    io/keyboard.cpp \
+    io/ppi.cpp
 
 HEADERS += \
     cpu/cpu.h \
@@ -49,4 +50,5 @@ HEADERS += \
     cpu/instruction.h \
     cpu/interrupthandler.h \
     io/porthandler.h \
-    io/keyboard.h
+    io/keyboard.h \
+    io/ppi.h
