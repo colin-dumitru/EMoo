@@ -399,6 +399,8 @@ inline void Decoder::decodeModRm(uint32_t& address, Instruction* instruction) {
             instruction->base = 0b1000; //ZERO
             instruction->index = 0b1000; //ZERO
             instruction->length += 2;
+            /*for instructions which read immediate value after modrm*/
+            address += 2;
         } else {
             instruction->displacement = 0;
             instruction->base = baseRegisterTable[mod];
@@ -411,6 +413,7 @@ inline void Decoder::decodeModRm(uint32_t& address, Instruction* instruction) {
         instruction->index = indexRegisterTable[mod];
         instruction->displacement = ram->read8(address);
         instruction->length += 1;
+        address += 1;
         break;
     case 0b10000000:
         instruction->registerAddressing = false;
@@ -418,6 +421,7 @@ inline void Decoder::decodeModRm(uint32_t& address, Instruction* instruction) {
         instruction->index = indexRegisterTable[mod];
         instruction->displacement = ram->read16(address);
         instruction->length += 2;
+        address += 1;
         break;
     case 0b11000000:
         instruction->registerAddressing = true;

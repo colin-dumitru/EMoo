@@ -7,7 +7,7 @@
 class PortHandler
 {
 
-    static const uint16_t PORT_RANGE = 0xFFF;
+    static const uint16_t PORT_RANGE = 0xFFFF;
 
 private:
     void (*writeHandlers[PORT_RANGE])(uint16_t port, uint8_t value);

@@ -396,7 +396,8 @@ inline void Interpreter::interpret(uint32_t address) {
         machine.cpu.decoder->decode(address, &cache.instructionCache[address]);
     }
     machine.cpu.ip.data += cache.instructionCache[address].length;
-    fprintf(out, "%x %x %x %x %x\n", machine.ram.buffer[address], machine.ram.buffer[address + 1], machine.ram.buffer[address + 2], machine.ram.buffer[address + 3], machine.cpu.ax.data);
+    //fprintf(out, "%x\n", machine.ram.buffer[0xC0000]);
+    fprintf(out, "%x %x %x %x %x %x\n", machine.ram.buffer[address], machine.ram.buffer[address + 1], machine.ram.buffer[address + 2], machine.ram.buffer[address + 3], machine.cpu.ax.data, machine.cpu.dx.data);
     interpret(&cache.instructionCache[address]);
 }
 

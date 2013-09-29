@@ -3,11 +3,19 @@
 #include <unistd.h>
 #include <time.h>
 
-void runNormal() {
+
+void reset() {
     machine.reset();
+
     machine.ram.loadFromFile(BIOS_FILE, 0xFE000);
+    machine.ram.loadFromFile(VROM_FILE, 0xC0000);
+
     machine.cpu.ip.data = 0x0000;
     machine.cpu.cs.data = 0xFFFF;
+}
+
+void runNormal() {
+    reset();
 
     while(1) {
         machine.step();
@@ -25,13 +33,10 @@ void runTest() {
 
     start = clock();
 
-    machine.reset();
-    machine.ram.loadFromFile(BIOS_FILE, 0xFE000);
-    machine.cpu.ip.data = 0x0000;
-    machine.cpu.cs.data = 0xFFFF;
+    reset();
 
     while(instructions++ < 1000000) {
-        if(instructions == 361166) {
+        if(instructions == 481219 ) {
             int a = 0;
         }
         machine.step();
