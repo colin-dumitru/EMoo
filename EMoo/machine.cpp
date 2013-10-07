@@ -10,11 +10,13 @@ void Machine::reset() {
     machine.portHandler.registerReader(0x61, PPI::read61);
     machine.portHandler.registerReader(0x62, PPI::read62);
     machine.portHandler.registerReader(0x63, PPI::read63);
+    machine.portHandler.registerReader(0x3DA, VGA::readStatusRegister);
 
     machine.portHandler.registerWriter(0x60, Keyboard::write60);
     machine.portHandler.registerWriter(0x61, PPI::write61);
     machine.portHandler.registerWriter(0x62, PPI::write62);
     machine.portHandler.registerWriter(0x63, PPI::write63);
+    machine.portHandler.registerWriter(0x3DA, VGA::writeStatusRegister);
 
     cpu.ip.data = 0x0000;
     cpu.cs.data = 0x0000;
@@ -28,6 +30,11 @@ void Machine::reset() {
 }
 
 void Machine:: step() {
+    static uint64_t instructions = 0;
+
+    if(instructions++ == 481219 ) {
+        int a = 0;
+    }
     cpu.interpreter->interpret(uint32_t((cpu.cs.data << 4) + cpu.ip.data));
 }
 

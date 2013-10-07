@@ -29,14 +29,15 @@ SOURCES += main.cpp \
     mem/ram.cpp \
     mem/register16.cpp \
     machine.cpp \
-    common.cpp \
     cpu/interpreter.cpp \
     cpu/decoder.cpp \
     cpu/instruction.cpp \
     cpu/interrupthandler.cpp \
     io/porthandler.cpp \
     io/keyboard.cpp \
-    io/ppi.cpp
+    io/ppi.cpp \
+    cpu/timing.cpp \
+    io/vga.cpp
 
 HEADERS += \
     cpu/cpu.h \
@@ -51,4 +52,6 @@ HEADERS += \
     cpu/interrupthandler.h \
     io/porthandler.h \
     io/keyboard.h \
-    io/ppi.h
+    io/ppi.h \
+    cpu/timing.h \
+    io/vga.h

@@ -17,9 +17,10 @@ void reset() {
 void runNormal() {
     reset();
 
-    while(1) {
-        machine.step();
-    }
+    REPEAT32(
+        machine.step()
+    );
+    machine.timing.update();
 }
 
 void runTest() {
@@ -35,11 +36,11 @@ void runTest() {
 
     reset();
 
-    while(instructions++ < 1000000) {
-        if(instructions == 481219 ) {
-            int a = 0;
-        }
-        machine.step();
+    while(instructions++ < 100000) {
+        REPEAT32(
+            machine.step()
+        );
+        machine.timing.update();
     }
 
     end = clock();

@@ -21,10 +21,18 @@ extern Machine machine;
 #define ERR(...)
 #endif
 
+#ifdef DEBUG
+#define DEB(x) (x);
+#else
+#define DEB(x)
+#endif
+
 #define LOW(op) *(uint8_t*)(&(op))
 #define HIGH(op) *(((uint8_t*)(&(op))) + 1)
 #define WORD(op) (uint16_t*)(op)
 #define SIGNED8(op) (int8_t)(op)
 #define SIGNED16(op) (int16_t)(op)
 
+#define REPEAT8(x) x;x;x;x;x;x;x;x;
+#define REPEAT32(x) REPEAT8(x) REPEAT8(x) REPEAT8(x) REPEAT8(x)
 #endif

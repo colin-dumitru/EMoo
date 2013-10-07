@@ -5,6 +5,7 @@
 
 #define DEBUG
 #define RAM_SIZE 0x100000
+#define HOST_FREQ 1000000
 
 #define BIOS_FILE "/opt/x86/pcxtbios.bin"
 #define VROM_FILE "/opt/x86/videorom.bin"
