@@ -104,6 +104,8 @@ public:
     bool tf;
     bool itf;
 
+    FlagsRegister();
+
     void set(uint16_t operand1, uint16_t operand2, uint16_t result, uint16_t instruction);
     void set(uint16_t result, uint16_t instruction);
     void set(uint16_t instruction);
@@ -196,9 +198,7 @@ inline bool FlagsRegister::getCf() {
     case DEC:
         return operand2;
     case IMUL:
-        if(instruction == IMUL8) {
-            return (result & 0xFF00) != 0 && (result & 0xFF00) != 0xFF00;
-        }
+        return (result & 0xFF00) != 0 && (result & 0xFF00) != 0xFF00;
     case POPF:
         return operand1 & 1;
     case ROL:
@@ -250,7 +250,7 @@ inline bool FlagsRegister::getAf() {
     case DAA:
         return operand2;
     case POPF:
-        return (operand1 & 16 /*1 << 4*/) != 0;
+        return operand1 & 16 /*1 << 4*/;
     case ROL:
     case ROR:
     case RCL:
@@ -269,10 +269,18 @@ inline bool FlagsRegister::getOf() {
     switch (instruction & INSTRUCTION_MASK) {
     case ADD:
     case ADC:
-        return ((~(operand1 ^ operand2) & (operand2 ^ result)) & 0x8000) != 0;
+        if ((instruction & SIZE_MASK) == BIT8) {
+            return ((~(operand1 ^ operand2) & (operand2 ^ result)) & 0x80) != 0;
+        } else {
+            return ((~(operand1 ^ operand2) & (operand2 ^ result)) & 0x8000) != 0;
+        }
     case SUB:
     case SBB:
-        return (((operand1 ^ operand2) & (operand1 ^ result)) & 0x8000) != 0;
+        if ((instruction & SIZE_MASK) == BIT8) {
+            return (((operand1 ^ operand2) & (operand1 ^ result)) & 0x80) != 0;
+        } else {
+            return (((operand1 ^ operand2) & (operand1 ^ result)) & 0x8000) != 0;
+        }
     case NEG:
     case INC:
         return result == 0x8000;
@@ -318,7 +326,8 @@ inline bool FlagsRegister::getOf() {
 }
 
 inline uint16_t FlagsRegister::toWord() {
-    return (uint16_t)getCf() |
+    return 2 |
+            (uint16_t)getCf() |
             ((uint16_t)getPf() << 2) |
             ((uint16_t)getAf() << 4) |
             ((uint16_t)getZf() << 6) |
@@ -331,8 +340,8 @@ inline uint16_t FlagsRegister::toWord() {
 
 inline void FlagsRegister::fromWord(uint16_t value) {
     static const uint16_t resultTable[] = {
-        0, 0, 0, 2,
-        0, 0, 0x8000, 0x8002
+        1, 0, 0, 0,
+        0x8001, 0x8000, 0, 0
     };
 
     tf = (value & 256 /*1 << 8*/) != 0;
@@ -352,7 +361,8 @@ inline void FlagsRegister::fromWord(uint16_t value) {
 }
 
 inline uint8_t FlagsRegister::toByte() {
-    return (uint16_t)getCf() |
+    return 2 |
+            (uint16_t)getCf() |
             ((uint16_t)getPf() << 2) |
             ((uint16_t)getAf() << 4) |
             ((uint16_t)getZf() << 6) |
@@ -361,8 +371,8 @@ inline uint8_t FlagsRegister::toByte() {
 
 inline void FlagsRegister::fromByte(uint8_t value) {
     static const uint16_t resultTable[] = {
-        0, 0, 0, 2,
-        0, 0, 0x8000, 0x8002
+        1, 0, 0, 0,
+        0x8001, 0x8000, 0, 0
     };
 
     /*00 01 02*/

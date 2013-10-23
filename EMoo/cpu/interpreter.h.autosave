@@ -380,7 +380,7 @@ inline void Interpreter::push(uint16_t value) {
     *WORD((machine.ram.buffer + (machine.cpu.ss.data << 4) + machine.cpu.sp.data)) = value;
 }
 
-inline uint16_t Interpreter::pop() {
+inline uint16_t Interpreter::zpop() {
     static uint16_t tempValue;
 
     tempValue = *WORD((machine.ram.buffer + (machine.cpu.ss.data << 4) + machine.cpu.sp.data));
