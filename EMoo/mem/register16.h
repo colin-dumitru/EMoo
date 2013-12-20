@@ -168,9 +168,9 @@ inline bool FlagsRegister::getPf() {
 inline bool FlagsRegister::getSf() {
     switch(instruction & SIZE_MASK) {
     case BIT8:
-        return result >= 0x80;
+        return result & 0x80;
     case BIT16:
-        return result >= 0x8000;
+        return result & 0x8000;
     }
     ERR("Invalid sf size");
     return false;
@@ -300,15 +300,15 @@ inline bool FlagsRegister::getOf() {
         return (operand2 ^ (operand2 << 1)) & 0xBFFF;
     case SHL:
         if(instruction == SHL8) {
-            return (result ^ operand1) & 0x7F;
+            return (result ^ operand1) & 0x80;
         } else {
-            return (result ^ operand1) & 0x7FFF;
+            return (result ^ operand1) & 0x8000;
         }
     case SHR:
         if(instruction == SHL8) {
-            return result & 0x7F;
+            return operand1 & 0x80;
         } else {
-            return result & 0x7FFF;
+            return operand1 & 0x8000;
         }
     case CMC:
         return operand1 & 2;

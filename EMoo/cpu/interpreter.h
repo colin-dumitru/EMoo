@@ -397,7 +397,7 @@ inline void Interpreter::interpret(uint32_t address) {
     }
     machine.cpu.ip.data += cache.instructionCache[address].length;
     //fprintf(out, "%x\n", machine.ram.buffer[0xC0000]);
-    fprintf(out, "%x %x %x %x %x %x %x\n", machine.ram.buffer[address], machine.ram.buffer[address + 1], machine.ram.buffer[address + 2], machine.ram.buffer[address + 3], machine.cpu.ax.data, machine.cpu.dx.data, machine.cpu.flagsRegister.toWord());
+    //fprintf(out, "%x %x %x %x %x %x %x\n", machine.ram.buffer[address], machine.ram.buffer[address + 1], machine.ram.buffer[address + 2], machine.ram.buffer[address + 3], machine.cpu.ax.data, machine.cpu.dx.data, machine.cpu.flagsRegister.toWord());
     interpret(&cache.instructionCache[address]);
 }
 
@@ -2326,7 +2326,9 @@ inline void Interpreter::interpretWait(){
 
 /*9C*/
 inline void Interpreter::interpretPushF(){
-    push(machine.cpu.flagsRegister.toWord());
+    /* I've seen this both in the fake86 and bochs implementation, but I have no idea why it's so.
+       I'll buy anyone who can tell me a beer.*/
+    push(machine.cpu.flagsRegister.toWord() | 0xF800);
 }
 
 /*9D*/
@@ -2507,9 +2509,9 @@ inline void Interpreter::interpretLodsw(Instruction* instruction) {
 
 /*AE*/
 inline void Interpreter::interpretScasb(Instruction* instruction) {
-    operand1 = LOW(machine.cpu.ax.data);
-    operand2 = machine.ram.buffer[(machine.cpu.es.data << 4) + machine.cpu.di.data];
-    result = operand1 - operand2;
+    operand1 = machine.ram.buffer[(machine.cpu.es.data << 4) + machine.cpu.di.data];
+    operand2 = LOW(machine.cpu.ax.data);
+    result = uint8_t(operand1 - operand2);
 
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB8);
 
@@ -2527,9 +2529,9 @@ inline void Interpreter::interpretScasb(Instruction* instruction) {
 
 /*AF*/
 inline void Interpreter::interpretScasw(Instruction* instruction) {
-    operand1 = machine.cpu.ax.data;
-    operand2 = *WORD(&machine.ram.buffer[(machine.cpu.es.data << 4) + machine.cpu.di.data]);
-    result = operand1 - operand2;
+    operand1 = *WORD(&machine.ram.buffer[(machine.cpu.es.data << 4) + machine.cpu.di.data]);
+    operand2 = machine.cpu.ax.data;
+    result = uint16_t(operand1 - operand2);
 
     machine.cpu.flagsRegister.set(operand1, operand2, result, FlagsRegister::SUB16);
 

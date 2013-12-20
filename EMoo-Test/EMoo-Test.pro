@@ -20,7 +20,7 @@ DEFINES += SRCDIR=\\\"$$PWD/\\\"
 HEADERS += \
     cpu/addtest.h
 
-unix:!macx: LIBS += -L$$PWD/../build-EMoo-Desktop_Qt_5_0_2_GCC_64bit-Debug/ -lEMoo
+unix:!macx: LIBS += -L"$$PWD/../build-EMoo-Desktop_Qt_5_0_2_GCC_64bit-Debug/" -lEMoo
 
 INCLUDEPATH += $$PWD/../EMoo
 DEPENDPATH += $$PWD/../EMoo
